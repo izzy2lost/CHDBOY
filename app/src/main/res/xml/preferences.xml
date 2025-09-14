@@ -7,12 +7,12 @@
         <SwitchPreferenceCompat
             app:key="deletesource"
             app:title="Delete input file after compression" 
-            app:defaultValue="true" />
+            app:defaultValue="false" />
         
         <ListPreference
             app:key="theme"
             app:title="Theme"
-            app:defaultValue="Light"
+            app:defaultValue="Follow System"
             app:entries="@array/themes"
             app:entryValues="@array/themes" />
         
