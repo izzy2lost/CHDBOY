@@ -12,11 +12,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Chdman"
+        android:theme="@style/Theme.CHDBOY"
         tools:targetApi="31">
        <provider
-           android:name="com.chdman.utils.MyFileProvider"
-           android:authorities="com.chdman.fileprovider"
+           android:name="com.chdboy.utils.MyFileProvider"
+           android:authorities="com.chdboy.fileprovider"
            android:exported="true"
            android:grantUriPermissions="true"
            android:permission="android.permission.MANAGE_DOCUMENTS">
@@ -29,7 +29,7 @@
        </provider>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Base.Theme.Chdman"
+            android:theme="@style/Base.Theme.CHDBOY"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +39,7 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:theme="@style/Base.Theme.Chdman"
+            android:theme="@style/Base.Theme.CHDBOY"
             android:label="Preferences"
             android:exported="false" >
         </activity>

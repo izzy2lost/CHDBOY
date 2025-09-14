@@ -1,4 +1,4 @@
-package com.chdman.utils;
+package com.chdboy.utils;
 
 import android.app.ActionBar;
 import android.content.DialogInterface;
@@ -14,7 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import com.chdman.R;
+import com.chdboy.R;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;

@@ -1,4 +1,4 @@
-package com.chdman;
+package com.chdboy;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -7,7 +7,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.chdman.fragments.PreferenceFragment;
+import com.chdboy.fragments.PreferenceFragment;
 
 public class SettingsActivity extends AppCompatActivity {
     

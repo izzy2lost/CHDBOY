@@ -1,4 +1,4 @@
-package com.chdman.fragments;
+package com.chdboy.fragments;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.preference.Preference;
-import com.chdman.R;
+import com.chdboy.R;
 import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;
-import com.chdman.utils.Chdman;
+import com.chdboy.utils.Chdman;
 
 public class PreferenceFragment extends PreferenceFragmentCompat {
     
@@ -44,7 +44,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
                             break;
                         case "Follow System":
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                            pref.setSummary("Follow Systwm");
+                            pref.setSummary("Follow System");
                             break;
                     }
                     return true;

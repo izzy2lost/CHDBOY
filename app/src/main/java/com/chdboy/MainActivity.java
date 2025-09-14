@@ -1,4 +1,4 @@
-package com.chdman;
+package com.chdboy;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,11 +31,11 @@ import androidx.core.content.FileProvider;
 import androidx.core.provider.DocumentsContractCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
-import com.chdman.utils.Chdman;
-import com.chdman.utils.FilePicker;
+import com.chdboy.utils.Chdman;
+import com.chdboy.utils.FilePicker;
 
-import com.chdman.utils.Operations;
-import com.chdman.utils.UriParser;
+import com.chdboy.utils.Operations;
+import com.chdboy.utils.UriParser;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.File;
 import java.io.FileInputStream;

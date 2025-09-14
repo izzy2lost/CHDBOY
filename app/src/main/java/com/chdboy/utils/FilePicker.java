@@ -1,4 +1,4 @@
-package com.chdman.utils;
+package com.chdboy.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
-import com.chdman.MainActivity;
+import com.chdboy.MainActivity;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +41,7 @@ public class FilePicker {
                     openedFiles = new ArrayList<>();
                     Intent data = result.getData();
                     int flags = data.getFlags();
-                    act.getContentResolver().takePersistableUriPermission(data.getData(), (flags & Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));   
+                    act.getContentResolver().takePersistableUriPermission(data.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     if (data.getClipData() != null) {
                         for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                             openedFiles.add(data.getClipData().getItemAt(i).getUri());     

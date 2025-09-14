@@ -1,4 +1,4 @@
-package com.chdman.utils;
+package com.chdboy.utils;
 
 import android.R;
 import android.app.AuthenticationRequiredException;
@@ -83,7 +83,7 @@ public class MyFileProvider extends DocumentsProvider {
         String rootDir = getContext().getExternalFilesDir("").getPath();
         row.add(Root.COLUMN_ROOT_ID, rootDir);
         row.add(Root.COLUMN_FLAGS, Root.FLAG_SUPPORTS_CREATE | Root.FLAG_SUPPORTS_SEARCH | Root.FLAG_SUPPORTS_IS_CHILD);
-        row.add(Root.COLUMN_TITLE, "Chdman");
+        row.add(Root.COLUMN_TITLE, "CHDBOY");
         row.add(Root.COLUMN_DOCUMENT_ID, "/");
         row.add(Root.COLUMN_MIME_TYPES, "*/*");
         row.add(Root.COLUMN_AVAILABLE_BYTES, Integer.MAX_VALUE);

@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Chdman"
+rootProject.name = "CHDBOY"
 include ':app'
