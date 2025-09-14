@@ -2,14 +2,13 @@ apply plugin: "com.android.application"
 
 android {
     namespace 'com.chdboy'
-    compileSdk 34
-    ndkVersion "27.0.12077973"
+    compileSdk 36
+    ndkVersion "28.2.13676358"
 
     defaultConfig {
         applicationId "com.chdboy"
         minSdk 23
-        //noinspection ExpiredTargetSdkVersion
-        targetSdk 28
+        targetSdk 36
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -42,8 +41,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -57,7 +56,7 @@ dependencies {
     implementation libs.constraintlayout
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
-    implementation "androidx.preference:preference-ktx:1.2.0"
+    implementation "androidx.preference:preference-ktx:1.2.1"
     implementation libs.navigation.runtime
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

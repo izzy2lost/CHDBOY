@@ -41,14 +41,21 @@ public class FilePicker {
                     openedFiles = new ArrayList<>();
                     Intent data = result.getData();
                     int flags = data.getFlags();
-                    act.getContentResolver().takePersistableUriPermission(data.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     if (data.getClipData() != null) {
                         for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                            openedFiles.add(data.getClipData().getItemAt(i).getUri());     
+                            Uri u = data.getClipData().getItemAt(i).getUri();
+                            openedFiles.add(u);
+                            try {
+                                act.getContentResolver().takePersistableUriPermission(u, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            } catch (SecurityException ignored) {}
                         }
+                    } else if (data.getData() != null) {
+                        Uri u = data.getData();
+                        openedFiles.add(u);
+                        try {
+                            act.getContentResolver().takePersistableUriPermission(u, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        } catch (SecurityException ignored) {}
                     }
-                    else
-                        openedFiles.add(data.getData());
                     switch (Operations.pendingOperation) {
                             case "compress":
                                 Operations.compress(act);
@@ -67,6 +74,7 @@ public class FilePicker {
         launcher.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         launcher.addCategory(Intent.CATEGORY_OPENABLE);
         launcher.setType(mimetype);
+        launcher.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         this.arl.launch(launcher);
     }
     

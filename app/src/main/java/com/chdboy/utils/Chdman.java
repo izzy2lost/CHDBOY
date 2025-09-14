@@ -33,10 +33,15 @@ import java.nio.file.Paths;
 import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.net.Uri;
+import android.provider.DocumentsContract;
 
 public class Chdman {
     
@@ -54,7 +59,9 @@ public class Chdman {
     private LinkedList<File> inputStack;
     private LinkedList<File> outputStack;
     private LinkedList<Thread> threadStack;
+    private LinkedList<ArrayList<File>> cleanupStack;
     private Context mContext;
+    private Uri destinationTreeUri;
     
     public Chdman(Context ctx) {
         this.mContext = ctx;
@@ -65,13 +72,20 @@ public class Chdman {
         this.inputStack = new LinkedList<>();
         this.outputStack = new LinkedList<>();
         this.threadStack = new LinkedList<>();
+        this.cleanupStack = new LinkedList<>();
         this.status = Status.INITIALIZED;
+        this.destinationTreeUri = null;
+    }
+    
+    public void setDestinationTreeUri(Uri uri) {
+        this.destinationTreeUri = uri;
     }
     
     private void clean() {
         inputStack.clear();
         outputStack.clear();
         threadStack.clear();
+        cleanupStack.clear();
         mode = "";
         status = Status.REINITIALIZED;
     }
@@ -140,11 +154,18 @@ public class Chdman {
                 Thread processThread = null;
                 File inputFile = null;    
                 File outputFile = null;
+                ArrayList<File> sidecarsToCleanup = null;
                 if (threadStack.isEmpty())
                     status = Status.COMPLETED;
                 if (status == Status.COMPLETED) {
                     clean();
                     hideAlertDialog(progressDialog);
+                    // Notify completion on UI
+                    handler.post(new Runnable() {
+                        @Override public void run() {
+                            android.widget.Toast.makeText(mContext, "Compression complete", android.widget.Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     return;    
                 }
                 if (mode != "" && status != Status.RUNNING) {
@@ -156,18 +177,54 @@ public class Chdman {
                         processThread = threadStack.pop();
                         inputFile = inputStack.pop();  
                         outputFile = outputStack.pop();
+                        sidecarsToCleanup = cleanupStack.pop();
                         String inputfileName = inputFile.getName();    
                         String outputfileName = outputFile.getName();
                         progressDialog.setMessage(outputfileName);     
                         processThread.start();
                         processThread.join();
-                        if (deleteInput) {
-                            if (inputfileName.endsWith(".cue")) {
-                                String binInputFile = inputfileName.substring(0, inputfileName.lastIndexOf(".")) + ".bin"; 
-                                new File(inputFile.getParent(), binInputFile).delete();       
+                        // After compression, optionally move output to destination via SAF
+                        if (destinationTreeUri != null && outputFile.exists()) {
+                            try {
+                                String treeId = DocumentsContract.getTreeDocumentId(destinationTreeUri);
+                                Uri parentDoc = DocumentsContract.buildDocumentUriUsingTree(destinationTreeUri, treeId);
+                                Uri destFileUri = DocumentsContract.createDocument(
+                                        mContext.getContentResolver(),
+                                        parentDoc,
+                                        "application/octet-stream",
+                                        outputfileName
+                                );
+                                if (destFileUri != null) {
+                                    InputStream is = new FileInputStream(outputFile);
+                                    OutputStream os = mContext.getContentResolver().openOutputStream(destFileUri);
+                                    if (is != null && os != null) {
+                                        byte[] buffer = new byte[8192];
+                                        int length;
+                                        while ((length = is.read(buffer)) > 0) {
+                                            os.write(buffer, 0, length);
+                                        }
+                                        is.close();
+                                        os.close();
+                                    }
+                                    // Remove CHD from app directory after sending
+                                    outputFile.delete();
+                                }
+                            } catch (IOException ioe) {
+                                Log.e("Chdman", "Failed to move CHD to destination: " + ioe.getMessage());
                             }
-                            inputFile.delete();    
-                        }  
+                        }
+                        // Cleanup copied inputs in app external files dir regardless of user delete setting
+                        String externalDir = mContext.getExternalFilesDir("").getPath();
+                        if (inputFile.getAbsolutePath().startsWith(externalDir)) {
+                            // delete input
+                            if (inputFile.exists()) inputFile.delete();
+                            // delete any recorded sidecars
+                            if (sidecarsToCleanup != null) {
+                                for (File sf : sidecarsToCleanup) {
+                                    try { if (sf != null && sf.exists()) sf.delete(); } catch (Exception ignored) {}
+                                }
+                            }
+                        }
                     }
                     catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -179,11 +236,15 @@ public class Chdman {
     }
     
     public void addToCompressionQueue(String file) {
-        String output;
-        if (!file.contains(Environment.getExternalStorageDirectory().getPath())) 
-            output = mContext.getExternalFilesDir("") + "/" + file.substring(file.lastIndexOf("/"), file.lastIndexOf(".")) + ".chd";
-        else 
-            output = file.substring(0, file.lastIndexOf(".")) + ".chd";
+        addToCompressionQueue(file, new ArrayList<>());
+    }
+
+    public void addToCompressionQueue(String file, ArrayList<File> sidecars) {
+        // For modern Android, always output to app's external files directory
+        String fileName = file.substring(file.lastIndexOf("/") + 1);
+        String baseName = fileName.substring(0, fileName.lastIndexOf("."));
+        String output = mContext.getExternalFilesDir("") + "/" + baseName + ".chd";
+        
         File outputFile = new File(output);
         Runnable r = new Runnable() {
             @Override
@@ -196,11 +257,33 @@ public class Chdman {
                         createdvd(file, output);
                         break;
                 }
+                // Clean up copied input file(s) after compression if setting is enabled
+                if (deleteInput) {
+                    String externalDir = mContext.getExternalFilesDir("").getPath();
+                    if (file.startsWith(externalDir)) {
+                        File inputFile = new File(file);
+                        if (inputFile.exists()) {
+                            inputFile.delete();
+                        }
+                        // Also clean up associated bin/raw/wav file for cue files
+                        if (file.endsWith(".cue")) {
+                            String[] sidecars = new String[] { ".bin", ".raw", ".wav" };
+                            for (String ext : sidecars) {
+                                String candidate = file.substring(0, file.lastIndexOf(".")) + ext;
+                                File maybe = new File(candidate);
+                                if (maybe.exists()) {
+                                    maybe.delete();
+                                }
+                            }
+                        }
+                    }
+                }
             }
         };
         if (!outputFile.exists()) {
             inputStack.add(new File(file));
             outputStack.add(outputFile);
+            cleanupStack.add(sidecars);
             Thread cmdThread = new Thread(r);
             threadStack.add(cmdThread);
         }    

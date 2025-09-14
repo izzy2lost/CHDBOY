@@ -65,10 +65,7 @@ public class MainActivity extends AppCompatActivity {
         return instance;
     }
     
-    private void enableStoragePermission() {
-        final String[] permissions = new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        getInstance().requestPermissions(permissions, PackageManager.PERMISSION_GRANTED);
-    }
+    // Modern Android uses SAF (Storage Access Framework) - no need for broad storage permissions
     
     private String getEnabledTheme() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getInstance());
@@ -110,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         picker = new FilePicker(getInstance());
         MenuItem.OnMenuItemClickListener listener;
         PreferenceManager.setDefaultValues(getInstance(), R.xml.preferences, false);
-        enableStoragePermission();
+        // Modern Android uses SAF - permissions handled per-file via document picker
         View v = getLayoutInflater().inflate(R.layout.activity_main, null, false);
         settingsButton = v.findViewById(R.id.settings_button);
         setEnabledTheme(getEnabledTheme());
