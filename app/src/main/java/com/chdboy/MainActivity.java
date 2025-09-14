@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -119,12 +124,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.compress) {
                     Operations.pendingOperation = "compress";
-                    picker.pickMultiple("*/*");
-                }     
-                else if (item.getItemId() == R.id.batch_compress) {
-                    Operations.pendingOperation = "compress";
                     picker.pickFolder();
-                }    
+                }     
                 else if (item.getItemId() == R.id.transfer) {
                     Operations.pendingOperation = "transfer";
                     picker.pickFolder();
@@ -150,5 +151,19 @@ public class MainActivity extends AppCompatActivity {
         });
         FloatingActionButton btn = findViewById(R.id.fab);
         btn.setOnClickListener(clickListener);
+        
+        // Request notification permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
+        
+        // Request notification permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
     }
 }

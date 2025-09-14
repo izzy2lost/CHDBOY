@@ -31,51 +31,43 @@ public final class Operations {
     
    public static void compress(AppCompatActivity mActivity){
         ArrayList<Uri> filesList = FilePicker.getFiles();
-        ArrayList<Uri> singleValidFiles = new ArrayList<Uri>();
         boolean handledAnyTree = false;
         
         // Create one Chdman instance per operation
         Chdman chdman = new Chdman(mActivity);
 
-        // Handle each selection; if it's a folder (tree), process with sidecars; if single doc, handle ISO directly
+        // Only accept folder (tree) selection; single-files are ignored with a notice
         for (Uri uri : filesList) {
+            Log.d("Operations", "Processing URI: " + uri.toString());
             if (uri.toString().contains("tree")) {
                 DocumentFile dir = DocumentFile.fromTreeUri(mActivity, uri);
                 if (dir != null) {
+                    Log.d("Operations", "Found directory: " + dir.getName());
                     handledAnyTree = true;
                     // Set destination to selected folder
                     chdman.setDestinationTreeUri(uri);
                     compressDirTree(mActivity, dir, chdman);
-                }
-            } else {
-                DocumentFile file = DocumentFile.fromSingleUri(mActivity, uri);
-                if (file != null && isValidForCompression(file.getName())) {
-                    // Only allow direct single-file processing for ISO; for CUE/GDI we need the folder to get sidecars
-                    String name = file.getName() == null ? "" : file.getName();
-                    String ext = getExt(name);
-                    if ("iso".equals(ext)) {
-                        singleValidFiles.add(uri);
-                    } else if ("cue".equals(ext) || "gdi".equals(ext)) {
-                        Toast.makeText(mActivity, "For CUE/GDI, please select the containing folder so referenced files can be accessed.", Toast.LENGTH_LONG).show();
-                    }
+                } else {
+                    Log.e("Operations", "Failed to create DocumentFile from tree URI");
                 }
             }
         }
         
-        if (!singleValidFiles.isEmpty()) {
-            compressUris(mActivity, singleValidFiles, chdman);
+        if (!handledAnyTree) {
+            Log.e("Operations", "No tree URI found in selection");
+            Toast.makeText(mActivity, "Please pick a folder to compress.", Toast.LENGTH_LONG).show();
+            filesList.clear();
+            pendingOperation = "";
+            return;
         }
         
         // Start compression once for the accumulated queue
+        Log.d("Operations", "Starting compression with chdman");
         chdman.startCompression();
 
         // Clear
         filesList.clear();
         pendingOperation = "";
-        
-        if (!handledAnyTree && singleValidFiles.isEmpty()) {
-            Toast.makeText(mActivity, "No valid files found for compression (ISO, CUE, GDI)", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private static String getExt(String fileName) {
@@ -95,9 +87,13 @@ public final class Operations {
     private static void compressDirTree(AppCompatActivity mActivity, DocumentFile dir, Chdman chdman) {
         // Build index of files in the folder
         DocumentFile[] children = dir.listFiles();
+        Log.d("Operations", "Found " + children.length + " files in directory");
         HashMap<String, DocumentFile> byName = new HashMap<>();
         for (DocumentFile f : children) {
-            if (f.getName() != null) byName.put(f.getName(), f);
+            if (f.getName() != null) {
+                Log.d("Operations", "File: " + f.getName());
+                byName.put(f.getName(), f);
+            }
         }
 
         // Collect tasks: for each ISO/CUE/GDI, copy needed files and queue
@@ -115,13 +111,18 @@ public final class Operations {
 
         // Copy and queue ISOs directly
         if (!isoFiles.isEmpty()) {
+            Log.d("Operations", "Found " + isoFiles.size() + " ISO files");
             compressUris(mActivity, isoFiles, chdman);
         }
 
         // Handle CUE with sidecars
+        if (!cueFiles.isEmpty()) {
+            Log.d("Operations", "Found " + cueFiles.size() + " CUE files");
+        }
         for (DocumentFile cue : cueFiles) {
             try {
                 Set<String> sidecars = parseCueDependencies(mActivity, cue.getUri());
+                Log.d("Operations", "CUE " + cue.getName() + " has " + sidecars.size() + " sidecars");
                 copyWithSidecarsAndQueue(mActivity, cue, sidecars, byName, chdman);
             } catch (IOException e) {
                 Toast.makeText(mActivity, "Failed to read CUE: " + cue.getName(), Toast.LENGTH_SHORT).show();

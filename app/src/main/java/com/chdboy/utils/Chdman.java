@@ -90,14 +90,76 @@ public class Chdman {
         status = Status.REINITIALIZED;
     }
     
-    private AlertDialog createProgressBarDialog(String title) {
+    private AlertDialog createProgressDialog(String title) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(mContext);
         AlertDialog dialog;
         builder.setTitle(title);
         builder.setCancelable(false);
-        builder.setView(R.layout.progress_bar);
+        
+        // Create custom progress layout
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(mContext);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(50, 30, 50, 30);
+        
+        android.widget.TextView statusText = new android.widget.TextView(mContext);
+        statusText.setText("Starting compression...");
+        statusText.setId(android.R.id.message);
+        layout.addView(statusText);
+        
+        android.widget.ProgressBar progressBar = new android.widget.ProgressBar(mContext, null, android.R.attr.progressBarStyleHorizontal);
+        progressBar.setIndeterminate(false);
+        progressBar.setMax(100);
+        progressBar.setProgress(0);
+        progressBar.setId(android.R.id.progress);
+        layout.addView(progressBar);
+        
+        builder.setView(layout);
         dialog = builder.create();
         return dialog;
+    }
+    
+    private void showProgressDialog(AlertDialog dlg) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!((android.app.Activity) mContext).isFinishing()) {
+                    dlg.show();
+                }
+            }
+        });
+    }
+    
+    private void hideProgressDialog(AlertDialog dlg) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (dlg.isShowing()) {
+                    dlg.dismiss();
+                }
+            }
+        });
+    }
+    
+    private void updateProgressDialog(AlertDialog dlg, String message, int progress) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (dlg.isShowing()) {
+                    android.widget.TextView statusText = dlg.findViewById(android.R.id.message);
+                    if (statusText != null) {
+                        statusText.setText(message);
+                    }
+                    android.widget.ProgressBar progressBar = dlg.findViewById(android.R.id.progress);
+                    if (progressBar != null && progress >= 0) {
+                        progressBar.setProgress(progress);
+                    }
+                }
+            }
+        });
+    }
+    
+    private void updateProgressDialog(AlertDialog dlg, String message) {
+        updateProgressDialog(dlg, message, -1); // -1 means don't update progress
     }
     
     private AlertDialog createModesDialog(String title) {
@@ -121,33 +183,27 @@ public class Chdman {
         return dialog;
     }
     
-    private void showAlertDialog(AlertDialog dlg) {
-        final Runnable showDialog = new Runnable() {
-            @Override
-            public void run() {
-                dlg.show();
-            }
-        };
-        handler.post(showDialog);
-    }
-    
-    private void hideAlertDialog(AlertDialog dlg) {
-        final Runnable hideDialog = new Runnable() {
-            @Override
-            public void run() {
-                dlg.hide();
-            }
-        };
-        handler.post(hideDialog);
-    }
+    // Dialog UI removed to support background operation
     
     public void startCompression() {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
-        AlertDialog progressDialog = createProgressBarDialog("Compress");
-        progressDialog.setMessage("");
-        AlertDialog modesDialog = createModesDialog("Select mode");
-        if (!threadStack.isEmpty())
-            showAlertDialog(modesDialog);
+        final AlertDialog progressDialog = createProgressDialog("Compression Progress");
+        showProgressDialog(progressDialog);
+        
+        // Start foreground service for persistent background execution
+        try {
+            com.chdboy.services.ChdmanService.ensureChannel(mContext);
+            android.content.Intent svc = new android.content.Intent(mContext, com.chdboy.services.ChdmanService.class);
+            if (android.os.Build.VERSION.SDK_INT >= 26) {
+                mContext.startForegroundService(svc);
+            } else {
+                mContext.startService(svc);
+            }
+            android.util.Log.d("Chdman", "Started foreground service");
+        } catch (Exception e) {
+            android.util.Log.e("Chdman", "Failed to start service: " + e.getMessage());
+        }
+        // Auto-select per job; no UI dialog to allow background execution
         executor.execute(new Runnable(){
             @Override
             public void run() {
@@ -155,22 +211,33 @@ public class Chdman {
                 File inputFile = null;    
                 File outputFile = null;
                 ArrayList<File> sidecarsToCleanup = null;
+                final AlertDialog dialog = progressDialog;
                 if (threadStack.isEmpty())
                     status = Status.COMPLETED;
                 if (status == Status.COMPLETED) {
                     clean();
-                    hideAlertDialog(progressDialog);
-                    // Notify completion on UI
+                    hideProgressDialog(dialog);
+                    // Completion notifications
+                    try { com.chdboy.services.ChdmanService.updateProgress(mContext, "Idle"); } catch (Exception ignored) {}
+                    try { com.chdboy.services.ChdmanService.notifyDone(mContext, "Compression complete"); } catch (Exception ignored) {}
                     handler.post(new Runnable() {
                         @Override public void run() {
                             android.widget.Toast.makeText(mContext, "Compression complete", android.widget.Toast.LENGTH_SHORT).show();
                         }
                     });
-                    return;    
+                    // Stop foreground service
+                    try {
+                        mContext.stopService(new android.content.Intent(mContext, com.chdboy.services.ChdmanService.class));
+                    } catch (Exception ignored) {}
+                    return;
                 }
-                if (mode != "" && status != Status.RUNNING) {
+                if (status != Status.RUNNING) {
                     status = Status.RUNNING;
-                    showAlertDialog(progressDialog);
+                    handler.post(new Runnable() {
+                        @Override public void run() {
+                            android.widget.Toast.makeText(mContext, "Compression started", android.widget.Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }    
                 if (status == Status.RUNNING) {
                     try {
@@ -180,9 +247,25 @@ public class Chdman {
                         sidecarsToCleanup = cleanupStack.pop();
                         String inputfileName = inputFile.getName();    
                         String outputfileName = outputFile.getName();
-                        progressDialog.setMessage(outputfileName);     
+                        // Calculate progress based on queue position (before popping)
+                        int totalFiles = inputStack.size() + 1; // +1 for current file being processed
+                        int currentFile = totalFiles - inputStack.size();
+                        int progressPercent = totalFiles > 0 ? (currentFile * 100) / totalFiles : 0;
+                        
+                        updateProgressDialog(dialog, 
+                            String.format("Compressing: %s\nFile %d of %d", inputfileName, currentFile + 1, totalFiles), 
+                            progressPercent);
+                        
                         processThread.start();
                         processThread.join();
+                        
+                        // Update to 100% when this file is done
+                        int newProgressPercent = totalFiles > 0 ? ((currentFile + 1) * 100) / totalFiles : 100;
+                        updateProgressDialog(dialog, 
+                            String.format("Completed: %s\nFile %d of %d done", outputfileName, currentFile + 1, totalFiles), 
+                            newProgressPercent);
+                        // Update progress notification
+                        try { com.chdboy.services.ChdmanService.updateProgress(mContext, "Compressing: " + outputfileName); } catch (Exception ignored) {}
                         // After compression, optionally move output to destination via SAF
                         if (destinationTreeUri != null && outputFile.exists()) {
                             try {
@@ -239,43 +322,47 @@ public class Chdman {
         addToCompressionQueue(file, new ArrayList<>());
     }
 
+    private String guessModeForFile(File inputFile) {
+        String name = inputFile.getName().toLowerCase();
+        if (name.endsWith(".cue") || name.endsWith(".gdi")) {
+            return "createcd";
+        }
+        if (name.endsWith(".iso")) {
+            // Default to createdvd for .iso to support PSP/PS2 and other DVD-like images.
+            // Fallback logic will try the opposite if this fails.
+            return "createdvd";
+        }
+        return "createcd";
+    }
+
     public void addToCompressionQueue(String file, ArrayList<File> sidecars) {
+        // Auto-select mode based on input if not already chosen
+        if (mode == null || mode.isEmpty()) {
+            mode = guessModeForFile(new File(file));
+        }
         // For modern Android, always output to app's external files directory
         String fileName = file.substring(file.lastIndexOf("/") + 1);
         String baseName = fileName.substring(0, fileName.lastIndexOf("."));
         String output = mContext.getExternalFilesDir("") + "/" + baseName + ".chd";
         
         File outputFile = new File(output);
+        final String jobMode = (mode == null || mode.isEmpty()) ? guessModeForFile(new File(file)) : mode;
+        final boolean isIso = file.toLowerCase().endsWith(".iso");
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                switch(mode) {
-                    case "createcd":
-                        createcd(file, output);
-                        break;
-                    case "createdvd":
-                        createdvd(file, output);
-                        break;
+                // First attempt with chosen job mode
+                if ("createcd".equals(jobMode)) {
+                    createcd(file, output);
+                } else {
+                    createdvd(file, output);
                 }
-                // Clean up copied input file(s) after compression if setting is enabled
-                if (deleteInput) {
-                    String externalDir = mContext.getExternalFilesDir("").getPath();
-                    if (file.startsWith(externalDir)) {
-                        File inputFile = new File(file);
-                        if (inputFile.exists()) {
-                            inputFile.delete();
-                        }
-                        // Also clean up associated bin/raw/wav file for cue files
-                        if (file.endsWith(".cue")) {
-                            String[] sidecars = new String[] { ".bin", ".raw", ".wav" };
-                            for (String ext : sidecars) {
-                                String candidate = file.substring(0, file.lastIndexOf(".")) + ext;
-                                File maybe = new File(candidate);
-                                if (maybe.exists()) {
-                                    maybe.delete();
-                                }
-                            }
-                        }
+                // If no output produced and it's an ISO, try the opposite mode as fallback
+                if (!new File(output).exists() && isIso) {
+                    if ("createcd".equals(jobMode)) {
+                        createdvd(file, output);
+                    } else {
+                        createcd(file, output);
                     }
                 }
             }
