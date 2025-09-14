@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Chdman" parent="Base.Theme.Chdman">
+    <style name="Theme.CHDBOY" parent="Base.Theme.CHDBOY">
         <!-- Transparent system bars for edge-to-edge. -->
     </style>
 </resources>
