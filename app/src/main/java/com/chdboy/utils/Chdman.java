@@ -218,7 +218,7 @@ public class Chdman {
                     clean();
                     hideProgressDialog(dialog);
                     // Completion notifications
-                    try { com.chdboy.services.ChdmanService.updateProgress(mContext, "Idle"); } catch (Exception ignored) {}
+                    try { com.chdboy.services.ChdmanService.updateIdle(mContext, "Idle"); } catch (Exception ignored) {}
                     try { com.chdboy.services.ChdmanService.notifyDone(mContext, "Compression complete"); } catch (Exception ignored) {}
                     handler.post(new Runnable() {
                         @Override public void run() {
@@ -265,7 +265,7 @@ public class Chdman {
                             String.format("Completed: %s\nFile %d of %d done", outputfileName, currentFile + 1, totalFiles), 
                             newProgressPercent);
                         // Update progress notification
-                        try { com.chdboy.services.ChdmanService.updateProgress(mContext, "Compressing: " + outputfileName); } catch (Exception ignored) {}
+                        try { com.chdboy.services.ChdmanService.updateProgressMessage(mContext, "Compressing: " + outputfileName); } catch (Exception ignored) {}
                         // After compression, optionally move output to destination via SAF
                         if (destinationTreeUri != null && outputFile.exists()) {
                             try {

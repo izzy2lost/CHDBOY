@@ -18,12 +18,15 @@ import com.chdboy.R;
 public class ChdmanService extends Service {
     public static final String CHANNEL_ID = "chdboy_compression";
     public static final int NOTIF_ID = 1001;
+    
+    private static Context serviceContext;
 
     @Override
     public void onCreate() {
         super.onCreate();
         android.util.Log.d("ChdmanService", "Service onCreate");
         ensureChannel();
+        serviceContext = this;
         startForegroundNotification();
     }
     
@@ -31,8 +34,8 @@ public class ChdmanService extends Service {
         try {
             Notification notif = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("CHDBOY")
-                    .setContentText("Compression in progress")
-                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setContentText("Starting compression...")
+                .setSmallIcon(R.drawable.ic_stat_name)
                     .setOngoing(true)
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setCategory(NotificationCompat.CATEGORY_PROGRESS)
@@ -46,7 +49,7 @@ public class ChdmanService extends Service {
                 Notification minimal = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle("CHDBOY")
                         .setContentText("Working...")
-                        .setSmallIcon(android.R.drawable.ic_menu_info_details)
+                        .setSmallIcon(R.drawable.ic_stat_name)
                         .build();
                 startForeground(NOTIF_ID, minimal);
             } catch (Exception e2) {
@@ -65,6 +68,7 @@ public class ChdmanService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        serviceContext = null;
     }
 
     @Nullable
@@ -91,10 +95,11 @@ public class ChdmanService extends Service {
 
     public static void updateProgress(Context ctx, String message) {
         if (!hasNotificationPermission(ctx)) return;
+        
         Notification notif = new NotificationCompat.Builder(ctx, CHANNEL_ID)
                 .setContentTitle(ctx.getString(R.string.app_name))
                 .setContentText(message)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(R.drawable.ic_stat_name)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .build();
@@ -105,15 +110,40 @@ public class ChdmanService extends Service {
 
     public static void notifyDone(Context ctx, String message) {
         if (!hasNotificationPermission(ctx)) return;
+        
+        // Show completion notification with static icon
         Notification notif = new NotificationCompat.Builder(ctx, CHANNEL_ID)
                 .setContentTitle(ctx.getString(R.string.app_name))
                 .setContentText(message)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setAutoCancel(true)
                 .build();
         try {
             NotificationManagerCompat.from(ctx).notify(NOTIF_ID + 1, notif);
         } catch (SecurityException ignored) {}
+    }
+    
+    public static void updateIdle(Context ctx, String message) {
+        if (!hasNotificationPermission(ctx)) return;
+        
+        // Show idle notification with static icon
+        Notification notif = new NotificationCompat.Builder(ctx, CHANNEL_ID)
+                .setContentTitle(ctx.getString(R.string.app_name))
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .build();
+        try {
+            NotificationManagerCompat.from(ctx).notify(NOTIF_ID, notif);
+        } catch (SecurityException ignored) {}
+    }
+    
+    // Public method to update notification message
+    public static void updateProgressMessage(Context ctx, String message) {
+        updateProgress(ctx, message);
     }
 
     private static boolean hasNotificationPermission(Context ctx) {
