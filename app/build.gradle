@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 
 android {
     namespace 'com.chdboy'
@@ -44,6 +45,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 
     buildFeatures {
         viewBinding true
@@ -57,7 +62,10 @@ dependencies {
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
     implementation "androidx.preference:preference-ktx:1.2.1"
+    implementation "androidx.documentfile:documentfile:1.0.1"
     implementation libs.navigation.runtime
+    
+    
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

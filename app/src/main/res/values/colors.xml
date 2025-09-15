@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Legacy colors for compatibility -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -9,4 +10,105 @@
     <color name="gray">#A9A9A9</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- CHDBOY Brand Colors - Light Theme -->
+    <!-- Primary - Bright Yellow -->
+    <color name="md_theme_light_primary">#FFD700</color>
+    <color name="md_theme_light_onPrimary">#1C1B1F</color>
+    <color name="md_theme_light_primaryContainer">#FFF8E1</color>
+    <color name="md_theme_light_onPrimaryContainer">#8A6914</color>
+    
+    <!-- Secondary - Bright Orange -->
+    <color name="md_theme_light_secondary">#FF8C00</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#FFE0B3</color>
+    <color name="md_theme_light_onSecondaryContainer">#8B4000</color>
+    
+    <!-- Tertiary - Brown -->
+    <color name="md_theme_light_tertiary">#8B4513</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#DDBEA9</color>
+    <color name="md_theme_light_onTertiaryContainer">#3E2723</color>
+    
+    <!-- Surface colors -->
+    <color name="md_theme_light_surface">#FFFBFE</color>
+    <color name="md_theme_light_onSurface">#1C1B1F</color>
+    <color name="md_theme_light_surfaceVariant">#F4F0E7</color>
+    <color name="md_theme_light_onSurfaceVariant">#47464F</color>
+    <color name="md_theme_light_surfaceContainerLowest">#FFFFFF</color>
+    <color name="md_theme_light_surfaceContainerLow">#F8F5F0</color>
+    <color name="md_theme_light_surfaceContainer">#F2EFE9</color>
+    <color name="md_theme_light_surfaceContainerHigh">#ECE9E3</color>
+    <color name="md_theme_light_surfaceContainerHighest">#E6E3DD</color>
+    
+    <!-- Background -->
+    <color name="md_theme_light_background">#FFFBFE</color>
+    <color name="md_theme_light_onBackground">#1C1B1F</color>
+    
+    <!-- Error -->
+    <color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_light_onError">#FFFFFF</color>
+    <color name="md_theme_light_errorContainer">#FFDAD6</color>
+    <color name="md_theme_light_onErrorContainer">#410002</color>
+    
+    <!-- Outline -->
+    <color name="md_theme_light_outline">#787680</color>
+    <color name="md_theme_light_outlineVariant">#C8C5D0</color>
+    
+    <!-- CHDBOY Brand Colors - Dark Theme -->
+    <!-- Primary - Softer Yellow for dark mode -->
+    <color name="md_theme_dark_primary">#F4C430</color>
+    <color name="md_theme_dark_onPrimary">#3C3000</color>
+    <color name="md_theme_dark_primaryContainer">#574500</color>
+    <color name="md_theme_dark_onPrimaryContainer">#FFDF9C</color>
+    
+    <!-- Secondary - Warmer Orange for dark mode -->
+    <color name="md_theme_dark_secondary">#FFB366</color>
+    <color name="md_theme_dark_onSecondary">#4A2800</color>
+    <color name="md_theme_dark_secondaryContainer">#6A3C00</color>
+    <color name="md_theme_dark_onSecondaryContainer">#FFD9B3</color>
+    
+    <!-- Tertiary - Lighter Brown for dark mode -->
+    <color name="md_theme_dark_tertiary">#B8956A</color>
+    <color name="md_theme_dark_onTertiary">#3C2E16</color>
+    <color name="md_theme_dark_tertiaryContainer">#534429</color>
+    <color name="md_theme_dark_onTertiaryContainer">#D5B185</color>
+    
+    <!-- Surface colors for dark mode -->
+    <color name="md_theme_dark_surface">#1C1B1F</color>
+    <color name="md_theme_dark_onSurface">#E6E3DD</color>
+    <color name="md_theme_dark_surfaceVariant">#47464F</color>
+    <color name="md_theme_dark_onSurfaceVariant">#C8C5D0</color>
+    <color name="md_theme_dark_surfaceContainerLowest">#0F0E13</color>
+    <color name="md_theme_dark_surfaceContainerLow">#1C1B1F</color>
+    <color name="md_theme_dark_surfaceContainer">#201F26</color>
+    <color name="md_theme_dark_surfaceContainerHigh">#2B2930</color>
+    <color name="md_theme_dark_surfaceContainerHighest">#36343B</color>
+    
+    <!-- Background for dark mode -->
+    <color name="md_theme_dark_background">#1C1B1F</color>
+    <color name="md_theme_dark_onBackground">#E6E3DD</color>
+    
+    <!-- Error for dark mode -->
+    <color name="md_theme_dark_error">#FFB4AB</color>
+    <color name="md_theme_dark_onError">#690005</color>
+    <color name="md_theme_dark_errorContainer">#93000A</color>
+    <color name="md_theme_dark_onErrorContainer">#FFDAD6</color>
+    
+    <!-- Outline for dark mode -->
+    <color name="md_theme_dark_outline">#918F99</color>
+    <color name="md_theme_dark_outlineVariant">#47464F</color>
+    
+    <!-- Hero card colors -->
+    <color name="hero_card_background_light">@color/md_theme_light_primaryContainer</color>
+    <color name="hero_card_text_light">@color/md_theme_light_onPrimaryContainer</color>
+    <color name="hero_card_background_dark">#FF000000</color>
+    <color name="hero_card_text_dark">#FFFFFFFF</color>
+    
+    <!-- Default hero card colors (light theme) -->
+    <color name="hero_card_background">@color/hero_card_background_light</color>
+    <color name="hero_card_text">@color/hero_card_text_light</color>
+    
+    <!-- Title color -->
+    <color name="title_bright_yellow">#FFEF00</color>
 </resources>

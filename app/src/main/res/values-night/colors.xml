@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Hero card colors for dark theme -->
+    <color name="hero_card_background">@color/hero_card_background_dark</color>
+    <color name="hero_card_text">@color/hero_card_text_dark</color>
+</resources>

@@ -1,66 +1,41 @@
 package com.chdboy;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
-import androidx.core.app.ActivityCompat;
-import android.os.Build;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AnimationUtils;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.ImageButton;
-import android.widget.Toast;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.FileProvider;
-import androidx.core.provider.DocumentsContractCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
 import com.chdboy.utils.Chdman;
 import com.chdboy.utils.FilePicker;
-
 import com.chdboy.utils.Operations;
-import com.chdboy.utils.UriParser;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import javax.crypto.NullCipher;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
     
     private FilePicker picker;
     private static MainActivity instance;
-    private ImageButton settingsButton;
-    private PopupMenu.OnMenuItemClickListener menuListener;
-    private View.OnClickListener clickListener;
-    private Chdman chdman;
+    private MaterialToolbar toolbar;
+    private ExtendedFloatingActionButton fab;
+    private MaterialCardView compressCard;
+    private MaterialCardView transferCard;
+    private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
+    private LinearLayout bottomSheet;
+    private MaterialCardView compressOption;
+    private MaterialCardView transferOption;
     
     public MainActivity() {
         instance = this;
@@ -69,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity getInstance() {
         return instance;
     }
-    
-    // Modern Android uses SAF (Storage Access Framework) - no need for broad storage permissions
     
     private String getEnabledTheme() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getInstance());
@@ -82,26 +55,12 @@ public class MainActivity extends AppCompatActivity {
         switch (theme) {
             case "Light":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                settingsButton.setImageResource(R.drawable.ic_action_settings_black);
                 break;
             case "Dark":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-               settingsButton.setImageResource(R.drawable.ic_action_settings_white);
                 break;
             case "Follow System":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-                switch (nightModeFlags) {
-                    case Configuration.UI_MODE_NIGHT_YES:
-                        settingsButton.setImageResource(R.drawable.ic_action_settings_white);
-                        break;
-                    case Configuration.UI_MODE_NIGHT_NO:
-                        settingsButton.setImageResource(R.drawable.ic_action_settings_black);
-                        break;
-                    case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                        settingsButton.setImageResource(R.drawable.ic_action_settings_white);
-                        break;
-                }
                 break;
         }
     }
@@ -109,61 +68,150 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        picker = new FilePicker(getInstance());
-        MenuItem.OnMenuItemClickListener listener;
-        PreferenceManager.setDefaultValues(getInstance(), R.xml.preferences, false);
-        // Modern Android uses SAF - permissions handled per-file via document picker
-        View v = getLayoutInflater().inflate(R.layout.activity_main, null, false);
-        settingsButton = v.findViewById(R.id.settings_button);
+        
+        // Initialize preferences and theme
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setEnabledTheme(getEnabledTheme());
-        setContentView(v);
-        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(mainToolbar);
-        menuListener = new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.compress) {
-                    Operations.pendingOperation = "compress";
-                    picker.pickFolder();
-                }     
-                else if (item.getItemId() == R.id.transfer) {
-                    Operations.pendingOperation = "transfer";
-                    picker.pickFolder();
-                }
-                return true;
-            }     
-        };
-        clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(getInstance(), v);
-                popup.setOnMenuItemClickListener(menuListener);  
-                popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-                popup.show();  
-            }    
-        };
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent settingsIntent =  new Intent(getInstance(), SettingsActivity.class);
-                startActivity(settingsIntent);
+        
+        // Set up the layout
+        setContentView(R.layout.activity_main);
+        
+        // Initialize picker
+        picker = new FilePicker(this);
+        
+        // Set up toolbar
+        toolbar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(toolbar);
+        
+        // Clear default title to show only our custom centered title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+        }
+        
+        // Initialize views
+        initializeViews();
+        
+        // Set up click listeners
+        setupClickListeners();
+        
+        // Request notification permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
             }
+        }
+    }
+    
+    private void initializeViews() {
+        fab = findViewById(R.id.fab);
+        compressCard = findViewById(R.id.compress_card);
+        transferCard = findViewById(R.id.transfer_card);
+        
+        // Initialize bottom sheet
+        bottomSheet = findViewById(R.id.bottom_sheet_folder_selection);
+        compressOption = findViewById(R.id.compress_option);
+        transferOption = findViewById(R.id.transfer_option);
+        
+        if (bottomSheet != null) {
+            bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            bottomSheetBehavior.setHideable(true);
+            bottomSheetBehavior.setPeekHeight(0);
+        }
+        
+        // Add entrance animations
+        compressCard.setAlpha(0f);
+        transferCard.setAlpha(0f);
+        
+        compressCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(600)
+            .setStartDelay(200)
+            .start();
+            
+        transferCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(600)
+            .setStartDelay(400)
+            .start();
+    }
+    
+    private void setupClickListeners() {
+        // FAB click listener
+        fab.setOnClickListener(v -> showFolderSelectionMenu());
+        
+        // Compress card click listener
+        compressCard.setOnClickListener(v -> {
+            animateCardPress(compressCard);
+            showBottomSheet("compress");
         });
-        FloatingActionButton btn = findViewById(R.id.fab);
-        btn.setOnClickListener(clickListener);
         
-        // Request notification permission for Android 13+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
-            }
+        // Transfer card click listener
+        transferCard.setOnClickListener(v -> {
+            animateCardPress(transferCard);
+            showBottomSheet("transfer");
+        });
+        
+        // Bottom sheet option click listeners
+        if (compressOption != null) {
+            compressOption.setOnClickListener(v -> {
+                animateCardPress(compressOption);
+                hideBottomSheet();
+                Operations.pendingOperation = "compress";
+                picker.pickFolder();
+            });
         }
         
-        // Request notification permission for Android 13+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
-            }
+        if (transferOption != null) {
+            transferOption.setOnClickListener(v -> {
+                animateCardPress(transferOption);
+                hideBottomSheet();
+                Operations.pendingOperation = "transfer";
+                picker.pickFolder();
+            });
         }
+    }
+    
+    private void animateCardPress(MaterialCardView card) {
+        card.animate()
+            .scaleX(0.95f)
+            .scaleY(0.95f)
+            .setDuration(100)
+            .withEndAction(() -> {
+                card.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(100)
+                    .start();
+            })
+            .start();
+    }
+    
+    private void showFolderSelectionMenu() {
+        showBottomSheet(null);
+    }
+    
+    private void showBottomSheet(String preselectedOperation) {
+        if (bottomSheetBehavior != null) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+    
+    private void hideBottomSheet() {
+        if (bottomSheetBehavior != null) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
