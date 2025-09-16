@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
     private MaterialToolbar toolbar;
     private ExtendedFloatingActionButton fab;
-    private MaterialCardView compressCard;
-    private MaterialCardView transferCard;
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
     private LinearLayout bottomSheet;
     private MaterialCardView compressOption;
@@ -104,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
     
     private void initializeViews() {
         fab = findViewById(R.id.fab);
-        compressCard = findViewById(R.id.compress_card);
-        transferCard = findViewById(R.id.transfer_card);
         
         // Initialize bottom sheet
         bottomSheet = findViewById(R.id.bottom_sheet_folder_selection);
@@ -118,40 +114,13 @@ public class MainActivity extends AppCompatActivity {
             bottomSheetBehavior.setHideable(true);
             bottomSheetBehavior.setPeekHeight(0);
         }
-        
-        // Add entrance animations
-        compressCard.setAlpha(0f);
-        transferCard.setAlpha(0f);
-        
-        compressCard.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(600)
-            .setStartDelay(200)
-            .start();
-            
-        transferCard.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(600)
-            .setStartDelay(400)
-            .start();
     }
     
     private void setupClickListeners() {
-        // FAB click listener
-        fab.setOnClickListener(v -> showFolderSelectionMenu());
-        
-        // Compress card click listener
-        compressCard.setOnClickListener(v -> {
-            animateCardPress(compressCard);
-            showBottomSheet("compress");
-        });
-        
-        // Transfer card click listener
-        transferCard.setOnClickListener(v -> {
-            animateCardPress(transferCard);
-            showBottomSheet("transfer");
+        // FAB click listener - directly compress files
+        fab.setOnClickListener(v -> {
+            Operations.pendingOperation = "compress";
+            picker.pickFolder();
         });
         
         // Bottom sheet option click listeners

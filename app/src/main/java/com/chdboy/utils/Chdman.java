@@ -367,13 +367,54 @@ public class Chdman {
                 }
             }
         };
-        if (!outputFile.exists()) {
+        // Check if CHD already exists in destination folder (if set) or app files directory
+        boolean chdExists = false;
+        String skipReason = "";
+        
+        if (destinationTreeUri != null) {
+            // Check if CHD exists in destination folder
+            try {
+                android.provider.DocumentsContract.getTreeDocumentId(destinationTreeUri);
+                androidx.documentfile.provider.DocumentFile destDir = androidx.documentfile.provider.DocumentFile.fromTreeUri(mContext, destinationTreeUri);
+                if (destDir != null) {
+                    String chdFileName = baseName + ".chd";
+                    androidx.documentfile.provider.DocumentFile[] files = destDir.listFiles();
+                    for (androidx.documentfile.provider.DocumentFile f : files) {
+                        if (f.getName() != null && f.getName().equals(chdFileName)) {
+                            chdExists = true;
+                            skipReason = "CHD already exists in destination folder: " + chdFileName;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("Chdman", "Error checking destination folder: " + e.getMessage());
+            }
+        }
+        
+        // Also check app files directory
+        if (!chdExists && outputFile.exists()) {
+            chdExists = true;
+            skipReason = "CHD already exists in app directory: " + outputFile.getName();
+        }
+        
+        if (!chdExists) {
             inputStack.add(new File(file));
             outputStack.add(outputFile);
             cleanupStack.add(sidecars);
             Thread cmdThread = new Thread(r);
             threadStack.add(cmdThread);
-        }    
+            Log.d("Chdman", "Added to compression queue: " + baseName + ".chd");
+        } else {
+            Log.i("Chdman", "Skipping compression - " + skipReason);
+            // Show toast notification that file was skipped
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    android.widget.Toast.makeText(mContext, "Skipped: " + baseName + ".chd already exists", android.widget.Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private native void createcd(String in, String out);
