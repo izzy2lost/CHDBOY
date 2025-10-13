@@ -31,18 +31,18 @@
     <color name="md_theme_light_onTertiaryContainer">#3E2723</color>
     
     <!-- Surface colors -->
-    <color name="md_theme_light_surface">#FFFBFE</color>
+    <color name="md_theme_light_surface">#FF8C00</color>
     <color name="md_theme_light_onSurface">#1C1B1F</color>
-    <color name="md_theme_light_surfaceVariant">#F4F0E7</color>
-    <color name="md_theme_light_onSurfaceVariant">#47464F</color>
-    <color name="md_theme_light_surfaceContainerLowest">#FFFFFF</color>
-    <color name="md_theme_light_surfaceContainerLow">#F8F5F0</color>
-    <color name="md_theme_light_surfaceContainer">#F2EFE9</color>
-    <color name="md_theme_light_surfaceContainerHigh">#ECE9E3</color>
-    <color name="md_theme_light_surfaceContainerHighest">#E6E3DD</color>
+    <color name="md_theme_light_surfaceVariant">#FFA500</color>
+    <color name="md_theme_light_onSurfaceVariant">#1C1B1F</color>
+    <color name="md_theme_light_surfaceContainerLowest">#FF8C00</color>
+    <color name="md_theme_light_surfaceContainerLow">#FF8C00</color>
+    <color name="md_theme_light_surfaceContainer">#FF8C00</color>
+    <color name="md_theme_light_surfaceContainerHigh">#FF8C00</color>
+    <color name="md_theme_light_surfaceContainerHighest">#FF8C00</color>
     
     <!-- Background -->
-    <color name="md_theme_light_background">#FFFBFE</color>
+    <color name="md_theme_light_background">#FF8C00</color>
     <color name="md_theme_light_onBackground">#1C1B1F</color>
     
     <!-- Error -->
@@ -100,8 +100,8 @@
     <color name="md_theme_dark_outlineVariant">#47464F</color>
     
     <!-- Hero card colors -->
-    <color name="hero_card_background_light">@color/md_theme_light_primaryContainer</color>
-    <color name="hero_card_text_light">@color/md_theme_light_onPrimaryContainer</color>
+    <color name="hero_card_background_light">#FFFFFFFF</color>
+    <color name="hero_card_text_light">#1C1B1F</color>
     <color name="hero_card_background_dark">#FF000000</color>
     <color name="hero_card_text_dark">#FFFFFFFF</color>
     

@@ -3,6 +3,7 @@ package com.chdboy.services;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import com.chdboy.MainActivity;
 import com.chdboy.R;
 
 public class ChdmanService extends Service {
@@ -32,6 +34,7 @@ public class ChdmanService extends Service {
     
     private void startForegroundNotification() {
         try {
+            PendingIntent pendingIntent = createPendingIntent(this);
             Notification notif = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("CHDBOY")
                     .setContentText("Starting compression...")
@@ -39,6 +42,7 @@ public class ChdmanService extends Service {
                     .setOngoing(true)
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                    .setContentIntent(pendingIntent)
                     .build();
             startForeground(NOTIF_ID, notif);
             android.util.Log.d("ChdmanService", "Started foreground notification");
@@ -46,10 +50,12 @@ public class ChdmanService extends Service {
             android.util.Log.e("ChdmanService", "Failed to start foreground: " + e.getMessage());
             // Try with minimal notification
             try {
+                PendingIntent pendingIntent = createPendingIntent(this);
                 Notification minimal = new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle("CHDBOY")
                         .setContentText("Working...")
                         .setSmallIcon(R.drawable.ic_stat_name)
+                        .setContentIntent(pendingIntent)
                         .build();
                 startForeground(NOTIF_ID, minimal);
             } catch (Exception e2) {
@@ -96,12 +102,15 @@ public class ChdmanService extends Service {
     public static void updateProgress(Context ctx, String message) {
         if (!hasNotificationPermission(ctx)) return;
         
+        PendingIntent pendingIntent = createPendingIntent(ctx);
         Notification notif = new NotificationCompat.Builder(ctx, CHANNEL_ID)
-                .setContentTitle(ctx.getString(R.string.app_name))
+                .setContentTitle("Compressing...")
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_stat_name)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent)
                 .build();
         try {
             NotificationManagerCompat.from(ctx).notify(NOTIF_ID, notif);
@@ -112,6 +121,7 @@ public class ChdmanService extends Service {
         if (!hasNotificationPermission(ctx)) return;
         
         // Show completion notification with static icon
+        PendingIntent pendingIntent = createPendingIntent(ctx);
         Notification notif = new NotificationCompat.Builder(ctx, CHANNEL_ID)
                 .setContentTitle(ctx.getString(R.string.app_name))
                 .setContentText(message)
@@ -119,6 +129,7 @@ public class ChdmanService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
                 .build();
         try {
             NotificationManagerCompat.from(ctx).notify(NOTIF_ID + 1, notif);
@@ -129,12 +140,14 @@ public class ChdmanService extends Service {
         if (!hasNotificationPermission(ctx)) return;
         
         // Show idle notification with static icon
+        PendingIntent pendingIntent = createPendingIntent(ctx);
         Notification notif = new NotificationCompat.Builder(ctx, CHANNEL_ID)
                 .setContentTitle(ctx.getString(R.string.app_name))
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent)
                 .build();
         try {
             NotificationManagerCompat.from(ctx).notify(NOTIF_ID, notif);
@@ -151,5 +164,15 @@ public class ChdmanService extends Service {
             return ActivityCompat.checkSelfPermission(ctx, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
         }
         return true; // Pre-Android 13 doesn't require explicit permission
+    }
+
+    private static PendingIntent createPendingIntent(Context ctx) {
+        Intent intent = new Intent(ctx, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        return PendingIntent.getActivity(ctx, 0, intent, flags);
     }
 }

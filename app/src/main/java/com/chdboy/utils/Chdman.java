@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.content.DialogInterface;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Environment;
 import androidx.preference.PreferenceManager;
 import java.lang.reflect.Field;
@@ -25,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -112,12 +114,24 @@ public class Chdman {
         android.widget.LinearLayout layout = new android.widget.LinearLayout(mContext);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
         layout.setPadding(60, 40, 60, 40);
+
+        // Adjust text contrast based on the active (light/dark) theme
+        boolean isNightMode = (mContext.getResources().getConfiguration().uiMode
+            & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int primaryTextColor = ContextCompat.getColor(
+            mContext,
+            isNightMode ? R.color.md_theme_dark_onSurface : R.color.md_theme_light_onSurface
+        );
+        int secondaryTextColor = ContextCompat.getColor(
+            mContext,
+            isNightMode ? R.color.md_theme_dark_onSurfaceVariant : R.color.md_theme_light_onSurfaceVariant
+        );
         
         // Main status text
         android.widget.TextView statusText = new android.widget.TextView(mContext);
         statusText.setText("Starting Smart Compress...");
         statusText.setTextSize(16);
-        statusText.setTextColor(0xFFFFFFFF); // White for visibility
+        statusText.setTextColor(primaryTextColor);
         statusText.setId(android.R.id.message);
         android.widget.LinearLayout.LayoutParams statusParams = new android.widget.LinearLayout.LayoutParams(
             android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
@@ -178,7 +192,7 @@ public class Chdman {
         android.widget.TextView separator = new android.widget.TextView(mContext);
         separator.setText("•");
         separator.setTextSize(12);
-        separator.setTextColor(0xFFFFFFFF); // White for visibility
+        separator.setTextColor(secondaryTextColor);
         separator.setGravity(android.view.Gravity.CENTER);
         android.widget.LinearLayout.LayoutParams sepParams = new android.widget.LinearLayout.LayoutParams(
             android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -192,7 +206,7 @@ public class Chdman {
         android.widget.TextView speedText = new android.widget.TextView(mContext);
         speedText.setText("Speed: --");
         speedText.setTextSize(12);
-        speedText.setTextColor(0xFFFFFFFF); // White for visibility
+        speedText.setTextColor(primaryTextColor);
         speedText.setId(android.R.id.summary); // Use summary for speed/time
         android.widget.LinearLayout.LayoutParams speedParams = new android.widget.LinearLayout.LayoutParams(
             0,
@@ -208,7 +222,7 @@ public class Chdman {
         android.widget.TextView noteText = new android.widget.TextView(mContext);
         noteText.setText("💡 You can exit the app - compression will continue in background and notify when complete");
         noteText.setTextSize(10);
-        noteText.setTextColor(0xFFFFFFFF); // White for visibility
+        noteText.setTextColor(secondaryTextColor);
         noteText.setGravity(android.view.Gravity.CENTER);
         noteText.setPadding(0, 16, 0, 0);
         noteText.setTypeface(null, android.graphics.Typeface.ITALIC);

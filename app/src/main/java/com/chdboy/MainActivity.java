@@ -22,6 +22,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         // Request notification permission for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+                showNotificationPermissionDialog();
             }
         }
     }
@@ -172,6 +173,27 @@ public class MainActivity extends AppCompatActivity {
         if (bottomSheetBehavior != null) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
+    }
+    
+    private void showNotificationPermissionDialog() {
+        new MaterialAlertDialogBuilder(this)
+            .setTitle("Enable Notifications")
+            .setMessage("CHDBOY needs notification permission to keep you updated on compression progress.\n\n" +
+                       "Some conversions can take a while depending on file size. Notifications allow the app to:\n\n" +
+                       "• Run compressions in the background\n" +
+                       "• Show progress updates\n" +
+                       "• Notify you when conversions are complete")
+            .setPositiveButton("Allow", (dialog, which) -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    ActivityCompat.requestPermissions(this, 
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+                }
+            })
+            .setNegativeButton("Not Now", (dialog, which) -> {
+                dialog.dismiss();
+            })
+            .setCancelable(false)
+            .show();
     }
     
     @Override

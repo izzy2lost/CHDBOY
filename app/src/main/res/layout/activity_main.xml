@@ -88,7 +88,11 @@
                         android:textAppearance="?attr/textAppearanceTitleLarge"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold"
-                        android:textAlignment="center" />
+                        android:textAlignment="center"
+                        android:shadowColor="#000000"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="8" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
@@ -206,7 +210,11 @@
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="#FFEF00"
                 android:textStyle="bold"
-                android:letterSpacing="0.1" />
+                android:letterSpacing="0.1"
+                android:shadowColor="#000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="8" />
                 
         </com.google.android.material.appbar.MaterialToolbar>
 

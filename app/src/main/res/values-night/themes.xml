@@ -49,6 +49,9 @@
         
         <!-- Floating Action Button styling -->
         <item name="floatingActionButtonStyle">@style/Widget.CHDBOY.FloatingActionButton</item>
+        
+        <!-- MaterialAlertDialog styling for dark mode -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.CHDBOY.MaterialAlertDialog</item>
     </style>
     
     <!-- No ActionBar variant for dark mode -->
@@ -79,5 +82,14 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:navigationBarColor">@color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+    </style>
+    
+    <!-- MaterialAlertDialog theme overlay for dark mode -->
+    <style name="ThemeOverlay.CHDBOY.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">#2B2930</item>
+        <item name="colorOnSurface">#E6E3DD</item>
+        <item name="colorOnSurfaceVariant">#C8C5D0</item>
+        <item name="android:textColorPrimary">#E6E3DD</item>
+        <item name="android:textColorSecondary">#C8C5D0</item>
     </style>
 </resources>
