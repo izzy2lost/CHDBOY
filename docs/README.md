@@ -38,7 +38,3 @@ To test the documentation locally:
    ```
 
 5. Visit `http://localhost:4000/CHDBOY/` in your browser
-
-## Note
-
-The `baseurl` in `_config.yml` is set to `/CHDBOY` to match the repository name. If you change the repository name, you'll need to update this value.
