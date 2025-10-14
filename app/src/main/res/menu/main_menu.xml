@@ -9,4 +9,10 @@
         android:contentDescription="Settings"
         app:showAsAction="ifRoom" />
         
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/menu_about"
+        android:contentDescription="@string/menu_about"
+        app:showAsAction="never" />
+        
 </menu>

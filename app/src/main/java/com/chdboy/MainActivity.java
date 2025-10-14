@@ -1,14 +1,15 @@
 package com.chdboy;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
+import android.net.Uri;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +25,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -180,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
             .setTitle("Enable Notifications")
             .setMessage("CHDBOY needs notification permission to keep you updated on compression progress.\n\n" +
                        "Some conversions can take a while depending on file size. Notifications allow the app to:\n\n" +
-                       "• Run compressions in the background\n" +
-                       "• Show progress updates\n" +
-                       "• Notify you when conversions are complete")
+                       "- Run compressions in the background\n" +
+                       "- Show progress updates\n" +
+                       "- Notify you when conversions are complete")
             .setPositiveButton("Allow", (dialog, which) -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ActivityCompat.requestPermissions(this, 
+                    ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
                 }
             })
@@ -197,12 +199,46 @@ public class MainActivity extends AppCompatActivity {
     }
     
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+    
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
+        } else if (item.getItemId() == R.id.action_about) {
+            showAboutDialog();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void showAboutDialog() {
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.about_title)
+            .setMessage(getString(R.string.about_message))
+            .setPositiveButton(R.string.about_button_website, (dialog, which) -> {
+                openUrl("https://izzy2lost.github.io/CHDBOY/");
+            })
+            .setNeutralButton(R.string.about_button_license, (dialog, which) -> {
+                openUrl("https://github.com/izzy2lost/CHDBOY/blob/master/LICENSE");
+            })
+            .setNegativeButton(android.R.string.ok, null)
+            .show();
+    }
+
+    private void openUrl(String url) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.about_browser_error, Toast.LENGTH_SHORT).show();
+        }
+    }
 }
+
+

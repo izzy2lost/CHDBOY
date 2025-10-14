@@ -5,6 +5,12 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="menu_about">About</string>
+    <string name="about_title">About CHDBOY</string>
+    <string name="about_message">CHDBOY is a Android pory of CHDMAN that compresses BIN, CUE, ISO, and more into CHD archives.\n\nHighlights:\n- Smartly switches between createcd and createdvd\n- Applies PSP-friendly hunk sizes automatically\n- Skips files that already have matching CHDs\n\nForked from Pipetto-crypto/Chdman and powered by CHDMAN from the MAME project.\n\n\u00A9 2025 izzy2lost. Visit the website or license for more details.</string>
+    <string name="about_button_website">Project Website</string>
+    <string name="about_button_license">View License</string>
+    <string name="about_browser_error">Unable to open link. Please install a web browser.</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
