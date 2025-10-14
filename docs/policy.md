@@ -45,11 +45,13 @@ By downloading, installing, or using CHDBOY, you agree to these terms and condit
 
 ### License
 
-CHDBOY is licensed under the GNU General Public License v3.0. You are free to:
+CHDBOY is licensed under the GNU General Public License v2. You are free to:
 - Use the application for any purpose
 - Study how the application works and modify it
 - Redistribute copies
 - Distribute modified versions
+
+For the full license text, please see: [https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 ### Limitations of Liability
 

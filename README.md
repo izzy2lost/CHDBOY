@@ -39,7 +39,7 @@ Artifacts will appear in `app/build/outputs/apk/`.
 
 ## License
 
-This project is released under the terms of the [GNU General Public License v3.0](LICENSE). See the LICENSE file for full details, including the upstream MAME and CHDMAN licenses.
+This project is released under the terms of the [GNU General Public License v2](LICENSE). See the LICENSE file for full details, including the upstream MAME and CHDMAN licenses.
 
 CHDBOY includes or interfaces with code from MAME ((c) MAMEdev). Refer to the upstream repositories for additional notices and acknowledgments.
 

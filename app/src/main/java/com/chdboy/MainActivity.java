@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 openUrl("https://izzy2lost.github.io/CHDBOY/");
             })
             .setNeutralButton(R.string.about_button_license, (dialog, which) -> {
-                openUrl("https://github.com/izzy2lost/CHDBOY/blob/master/LICENSE");
+                openUrl("https://www.gnu.org/licenses/old-licenses/gpl-2.0.html");
             })
             .setNegativeButton(android.R.string.ok, null)
             .show();
