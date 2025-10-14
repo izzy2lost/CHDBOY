@@ -24,7 +24,7 @@ Need help or found a bug?
 
 ## Licensing & Credits
 
-- CHDBOY is licensed under the [GNU GPL v2](https://github.com/izzy2lost/CHDBOY/blob/master/LICENSE).
+- CHDBOY is licensed under the [GNU GPL v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
 - The project builds upon:
   - [Pipetto-crypto/Chdman](https://github.com/Pipetto-crypto/Chdman)
   - [CHDMAN](https://github.com/mamedev/mame), part of the MAME project ((c) MAMEdev).
