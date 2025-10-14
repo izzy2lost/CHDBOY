@@ -7,6 +7,7 @@
         android:title="Settings"
         android:icon="@drawable/ic_settings"
         android:contentDescription="Settings"
+        android:visible="false"
         app:showAsAction="ifRoom" />
         
     <item
