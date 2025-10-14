@@ -7,7 +7,7 @@ title: Terms of Service and Privacy Policy
 
 ## Privacy Policy
 
-**Last Updated:** January 2025
+**Last Updated:** October 2025
 
 ### Data Collection and Use
 
