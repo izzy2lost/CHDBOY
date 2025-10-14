@@ -1,3 +1,8 @@
+---
+layout: default
+title: CHDBOY Support Site
+---
+
 # CHDBOY Support Site
 
 Welcome to the CHDBOY project page. This site hosts the public privacy policy, licensing notes, and contact information required for distribution on the Google Play Store.
