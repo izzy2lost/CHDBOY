@@ -1,8 +1,8 @@
 # Site settings
 title: CHDBOY Support Site
 description: Documentation, privacy policy, and support for CHDBOY Android app
-baseurl: "/CHDBOY" # the subpath of your site, e.g. /blog
-url: "https://izzy2lost.github.io" # the base hostname & protocol for your site
+baseurl: "/CHDBOY" 
+url: "https://izzy2lost.github.io"
 
 # Build settings
 markdown: kramdown
