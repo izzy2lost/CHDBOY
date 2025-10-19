@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.widget.Button;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Environment;
 import androidx.preference.PreferenceManager;
 import java.lang.reflect.Field;
@@ -158,7 +160,8 @@ public class Chdman {
         android.widget.TextView progressText = new android.widget.TextView(mContext);
         progressText.setText("0%");
         progressText.setTextSize(14);
-        progressText.setTextColor(0xFFFFEF00); // Bright yellow like FAB background
+        // Use darker color for light mode, keep bright yellow for dark mode
+        progressText.setTextColor(isNightMode ? 0xFFFFEF00 : 0xFF1B5E20); // Dark green for light mode
         progressText.setGravity(android.view.Gravity.CENTER);
         progressText.setTypeface(null, android.graphics.Typeface.BOLD);
         progressText.setId(android.R.id.text1); // Use text1 for progress percentage
@@ -178,7 +181,8 @@ public class Chdman {
         android.widget.TextView ratioText = new android.widget.TextView(mContext);
         ratioText.setText("Ratio: --");
         ratioText.setTextSize(12);
-        ratioText.setTextColor(0xFFFF5C00); // Bright orange for visibility
+        // Use darker color for light mode, keep bright orange for dark mode
+        ratioText.setTextColor(isNightMode ? 0xFFFF5C00 : 0xFFD84315); // Dark orange for light mode
         ratioText.setId(android.R.id.text2); // Use text2 for ratio
         android.widget.LinearLayout.LayoutParams ratioParams = new android.widget.LinearLayout.LayoutParams(
             0,
@@ -239,6 +243,12 @@ public class Chdman {
         });
         
         dialog = builder.create();
+        
+        // Style the dialog buttons after creation
+        dialog.setOnShowListener(dialogInterface -> {
+            styleProgressDialogButtons(dialog, isNightMode);
+        });
+        
         return dialog;
     }
     
@@ -885,6 +895,36 @@ public class Chdman {
                 }
             });
         }
+    }
+
+    private void styleProgressDialogButtons(AlertDialog dialog, boolean isNightMode) {
+        // Get button reference
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        
+        // Style the Cancel button if it exists
+        if (negativeButton != null) {
+            styleProgressButton(negativeButton, isNightMode);
+        }
+    }
+    
+    private void styleProgressButton(Button button, boolean isNightMode) {
+        // Create rounded background
+        GradientDrawable background = new GradientDrawable();
+        background.setShape(GradientDrawable.RECTANGLE);
+        background.setCornerRadius(20f);
+        
+        if (isNightMode) {
+            // Dark mode: dark background with light text
+            background.setColor(0xFF2B2930);
+            button.setTextColor(0xFFE6E3DD);
+        } else {
+            // Light mode: brown background with black text
+            background.setColor(0xFF8B4513);
+            button.setTextColor(0xFF000000);
+        }
+        
+        button.setBackground(background);
+        button.setPadding(32, 16, 32, 16);
     }
 
     private native void createcd(String in, String out);

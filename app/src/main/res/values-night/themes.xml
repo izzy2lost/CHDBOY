@@ -51,7 +51,7 @@
         <item name="floatingActionButtonStyle">@style/Widget.CHDBOY.FloatingActionButton</item>
         
         <!-- MaterialAlertDialog styling for dark mode -->
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.CHDBOY.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.CHDBOY.MaterialAlertDialog.Dark</item>
     </style>
     
     <!-- No ActionBar variant for dark mode -->
@@ -85,11 +85,25 @@
     </style>
     
     <!-- MaterialAlertDialog theme overlay for dark mode -->
-    <style name="ThemeOverlay.CHDBOY.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+    <style name="ThemeOverlay.CHDBOY.MaterialAlertDialog.Dark" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorSurface">#2B2930</item>
         <item name="colorOnSurface">#E6E3DD</item>
         <item name="colorOnSurfaceVariant">#C8C5D0</item>
         <item name="android:textColorPrimary">#E6E3DD</item>
         <item name="android:textColorSecondary">#C8C5D0</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.CHDBOY.Button.TextButton.Dialog.Dark</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.CHDBOY.Button.TextButton.Dialog.Dark</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.CHDBOY.Button.TextButton.Dialog.Dark</item>
+    </style>
+    
+    <!-- Dialog button style for dark mode -->
+    <style name="Widget.CHDBOY.Button.TextButton.Dialog.Dark" parent="Widget.Material3.Button.UnelevatedButton">
+        <item name="android:textColor">#E6E3DD</item>
+        <item name="iconTint">#E6E3DD</item>
+        <!-- Dark background for consistency -->
+        <item name="backgroundTint">#2B2930</item>
+        <item name="android:textColorPrimary">#E6E3DD</item>
+        <item name="android:textColorSecondary">#C8C5D0</item>
+        <item name="rippleColor">#E6E3DD26</item>
     </style>
 </resources>

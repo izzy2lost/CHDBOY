@@ -10,12 +10,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.net.Uri;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
+import android.content.res.Configuration;
+import android.widget.Button;
+import android.graphics.drawable.GradientDrawable;
 import com.chdboy.utils.Chdman;
 import com.chdboy.utils.FilePicker;
 import com.chdboy.utils.Operations;
@@ -178,24 +182,29 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void showNotificationPermissionDialog() {
-        new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
             .setTitle("Enable Notifications")
             .setMessage("CHDBOY needs notification permission to keep you updated on compression progress.\n\n" +
                        "Some conversions can take a while depending on file size. Notifications allow the app to:\n\n" +
                        "- Run compressions in the background\n" +
                        "- Show progress updates\n" +
                        "- Notify you when conversions are complete")
-            .setPositiveButton("Allow", (dialog, which) -> {
+            .setPositiveButton("Allow", (dialog1, which) -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
                 }
             })
-            .setNegativeButton("Not Now", (dialog, which) -> {
-                dialog.dismiss();
+            .setNegativeButton("Not Now", (dialog1, which) -> {
+                dialog1.dismiss();
             })
             .setCancelable(false)
-            .show();
+            .create();
+        
+        dialog.show();
+        
+        // Style buttons after showing dialog
+        styleDialogButtons(dialog);
     }
     
     @Override
@@ -218,17 +227,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAboutDialog() {
-        new MaterialAlertDialogBuilder(this)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.about_title)
             .setMessage(getString(R.string.about_message))
-            .setPositiveButton(R.string.about_button_website, (dialog, which) -> {
+            .setPositiveButton(R.string.about_button_website, (dialog1, which) -> {
                 openUrl("https://izzy2lost.github.io/CHDBOY/");
             })
-            .setNeutralButton(R.string.about_button_license, (dialog, which) -> {
+            .setNeutralButton(R.string.about_button_license, (dialog1, which) -> {
                 openUrl("https://www.gnu.org/licenses/old-licenses/gpl-2.0.html");
             })
             .setNegativeButton(android.R.string.ok, null)
-            .show();
+            .create();
+        
+        dialog.show();
+        
+        // Style buttons after showing dialog
+        styleDialogButtons(dialog);
     }
 
     private void openUrl(String url) {
@@ -238,6 +252,47 @@ public class MainActivity extends AppCompatActivity {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.about_browser_error, Toast.LENGTH_SHORT).show();
         }
+    }
+    
+    private void styleDialogButtons(AlertDialog dialog) {
+        // Check if we're in dark mode
+        boolean isNightMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        
+        // Get button references
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        
+        // Style each button that exists
+        if (positiveButton != null) {
+            styleButton(positiveButton, isNightMode);
+        }
+        if (negativeButton != null) {
+            styleButton(negativeButton, isNightMode);
+        }
+        if (neutralButton != null) {
+            styleButton(neutralButton, isNightMode);
+        }
+    }
+    
+    private void styleButton(Button button, boolean isNightMode) {
+        // Create rounded background
+        GradientDrawable background = new GradientDrawable();
+        background.setShape(GradientDrawable.RECTANGLE);
+        background.setCornerRadius(20f);
+        
+        if (isNightMode) {
+            // Dark mode: dark background with light text
+            background.setColor(0xFF2B2930);
+            button.setTextColor(0xFFE6E3DD);
+        } else {
+            // Light mode: brown background with black text
+            background.setColor(0xFF8B4513);
+            button.setTextColor(0xFF000000);
+        }
+        
+        button.setBackground(background);
+        button.setPadding(32, 16, 32, 16);
     }
 }
 

@@ -51,7 +51,7 @@
         <item name="floatingActionButtonStyle">@style/Widget.CHDBOY.FloatingActionButton</item>
         
         <!-- MaterialAlertDialog styling for better contrast -->
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.CHDBOY.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.CHDBOY.MaterialAlertDialog.Light</item>
     </style>
     
     <!-- No ActionBar variant -->
@@ -118,36 +118,44 @@
     </style>
     
     <!-- MaterialAlertDialog theme overlay for light mode -->
-    <style name="ThemeOverlay.CHDBOY.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+    <style name="ThemeOverlay.CHDBOY.MaterialAlertDialog.Light" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorSurface">#FF8C00</item>
-        <item name="colorOnSurface">#000000</item>
-        <item name="colorOnSurfaceVariant">#000000</item>
-        <item name="colorPrimary">#000000</item>
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="android:textColorSecondary">#000000</item>
-        <item name="android:textColor">#000000</item>
+        <item name="colorOnSurface">#1C1B1F</item>
+        <item name="colorOnSurfaceVariant">#1C1B1F</item>
+        <item name="colorPrimary">#1C1B1F</item>
+        <item name="android:textColorPrimary">#1C1B1F</item>
+        <item name="android:textColorSecondary">#3C3000</item>
+        <item name="android:textColor">#1C1B1F</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.CHDBOY.Title.Text</item>
         <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.CHDBOY.Body.Text</item>
         <item name="buttonBarPositiveButtonStyle">@style/Widget.CHDBOY.Button.TextButton.Dialog</item>
         <item name="buttonBarNegativeButtonStyle">@style/Widget.CHDBOY.Button.TextButton.Dialog</item>
         <item name="buttonBarNeutralButtonStyle">@style/Widget.CHDBOY.Button.TextButton.Dialog</item>
+        <!-- Override any yellow colors that might leak through -->
+        <item name="colorSecondary">#1C1B1F</item>
+        <item name="colorTertiary">#1C1B1F</item>
     </style>
     
     <!-- Dialog title text style -->
     <style name="MaterialAlertDialog.CHDBOY.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">#1C1B1F</item>
     </style>
     
     <!-- Dialog body text style -->
     <style name="MaterialAlertDialog.CHDBOY.Body.Text" parent="MaterialAlertDialog.Material3.Body.Text">
-        <item name="android:textColor">#000000</item>
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="android:textColorSecondary">#000000</item>
+        <item name="android:textColor">#1C1B1F</item>
+        <item name="android:textColorPrimary">#1C1B1F</item>
+        <item name="android:textColorSecondary">#3C3000</item>
     </style>
     
     <!-- Dialog button style -->
-    <style name="Widget.CHDBOY.Button.TextButton.Dialog" parent="Widget.Material3.Button.TextButton.Dialog">
-        <item name="android:textColor">#000000</item>
-        <item name="iconTint">#000000</item>
+    <style name="Widget.CHDBOY.Button.TextButton.Dialog" parent="Widget.Material3.Button.UnelevatedButton">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="iconTint">#FFFFFF</item>
+        <!-- Brown background for better visibility -->
+        <item name="backgroundTint">#8B4513</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="rippleColor">#FFFFFF26</item>
     </style>
 </resources>
