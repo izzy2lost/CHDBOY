@@ -1,6 +1,6 @@
-[submodule "app/src/main/cpp/mame"]
-	path = app/src/main/cpp/mame
-	url = https://github.com/izzy2lost/mame.git
-[submodule "app/src/main/cpp/ogg"]
-	path = app/src/main/cpp/ogg
-	url = https://github.com/soundcloud/ogg.git
+[submodule "app/src/main/cpp/libchdr"]
+	path = app/src/main/cpp/libchdr
+	url = https://github.com/rtissera/libchdr.git
+[submodule "app/src/main/cpp/zstd"]
+	path = app/src/main/cpp/zstd
+	url = https://github.com/facebook/zstd.git
