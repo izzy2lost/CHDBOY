@@ -23,7 +23,6 @@ import androidx.preference.PreferenceManager
 import com.chdboy.R
 import com.chdboy.services.ConversionService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.io.InputStream
 import java.util.Locale
 import java.util.concurrent.Executors
 import kotlin.math.log10
@@ -53,12 +52,6 @@ class Converter(private val activity: AppCompatActivity) {
         val source: DocumentFile,
         val sidecars: List<DocumentFile>,
         val outputName: String,
-
-        /** True for a PSP UMD image, which gets asked about before it runs. */
-        val isPsp: Boolean = false,
-
-        /** 0 leaves the writer's default in place. */
-        val hunkBytes: Int = 0,
     )
 
     fun convertFolder(treeUri: Uri) {
@@ -90,7 +83,7 @@ class Converter(private val activity: AppCompatActivity) {
                 continue
             }
 
-            jobs += Job(file, sidecarsFor(file, byName), outputName, isPsp = isPspImage(file))
+            jobs += Job(file, sidecarsFor(file, byName), outputName)
         }
 
         if (jobs.isEmpty()) {
@@ -109,94 +102,7 @@ class Converter(private val activity: AppCompatActivity) {
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
 
-        val psp = jobs.count { it.isPsp }
-
-        if (psp == 0) {
-            start(tree, jobs)
-            return
-        }
-
-        // PSP is the one target whose reader has a documented preference, so it
-        // is the one case worth interrupting for. Everything else in the run
-        // keeps the default either way.
-        askPspHunkSize(psp) { hunkBytes ->
-            start(tree, jobs.map { if (it.isPsp) it.copy(hunkBytes = hunkBytes) else it })
-        }
-    }
-
-    /**
-     * PPSSPP decompresses a whole hunk to serve one 2048-byte sector and keeps
-     * exactly one of them cached, so the hunk size is the difference between a
-     * game that streams and a game that stutters. Its documentation asks for
-     * 2048; the default here is 64 times that because it compresses far better.
-     *
-     * Neither answer is wrong, and the trade is legible enough to state, so it
-     * is put to the user rather than guessed at.
-     */
-    private fun askPspHunkSize(count: Int, onChosen: (Int) -> Unit) {
-        val night = (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
-
-        val dialog = MaterialAlertDialogBuilder(activity)
-            .setTitle(activity.getString(R.string.psp_hunk_title))
-            .setMessage(activity.resources.getQuantityString(R.plurals.psp_hunk_message, count, count))
-            .setCancelable(false)
-            .setPositiveButton(R.string.psp_hunk_compatible) { _, _ -> onChosen(PSP_HUNK_BYTES) }
-            .setNegativeButton(R.string.psp_hunk_smallest) { _, _ -> onChosen(DEFAULT_HUNK_BYTES) }
-            .create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.let { styleButton(it, night) }
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.let { styleButton(it, night) }
-        }
-
-        dialog.show()
-    }
-
-    /**
-     * Whether an .iso is a PSP UMD dump.
-     *
-     * ISO 9660 puts its primary volume descriptor at sector 16, and a UMD
-     * writes "PSP GAME" into its system identifier. Some dumping tools blank
-     * that field, so the root directory is also checked for UMD_DATA.BIN,
-     * which every UMD carries and nothing else does.
-     */
-    private fun isPspImage(file: DocumentFile): Boolean {
-        if (extensionOf(file.name.orEmpty()) != "iso") {
-            return false
-        }
-
-        return runCatching {
-            activity.contentResolver.openInputStream(file.uri)?.use { stream ->
-                if (!stream.skipExactly(PVD_OFFSET)) {
-                    return@use false
-                }
-
-                val descriptor = ByteArray(SECTOR_BYTES)
-
-                if (!stream.readExactly(descriptor)) {
-                    return@use false
-                }
-
-                // Not ISO 9660 at all, so not a UMD either.
-                if (String(descriptor, 1, 5, Charsets.US_ASCII) != "CD001") {
-                    return@use false
-                }
-
-                if (String(descriptor, 8, 32, Charsets.US_ASCII).trim().startsWith("PSP GAME")) {
-                    return@use true
-                }
-
-                // The root directory records sit a few sectors past the
-                // descriptor, well inside this window.
-                val directory = ByteArray(DIRECTORY_SCAN_BYTES)
-                val read = stream.readAtMost(directory)
-                directory.containsAscii("UMD_DATA.BIN", read)
-            } ?: false
-        }.getOrElse {
-            Log.w(TAG, "Could not inspect ${file.name}", it)
-            false
-        }
+        start(tree, jobs)
     }
 
     private fun start(tree: DocumentFile, jobs: List<Job>) {
@@ -313,7 +219,7 @@ class Converter(private val activity: AppCompatActivity) {
                 return false
             }
 
-            val ok = Native.nativeConvert(sourcePath, outputPath, PORTABLE, job.hunkBytes)
+            val ok = Native.nativeConvert(sourcePath, outputPath, PORTABLE, HUNK_BYTES_AUTO)
 
             if (!ok) {
                 // A failed or cancelled run leaves a partial document behind.
@@ -705,69 +611,6 @@ class Converter(private val activity: AppCompatActivity) {
 
     private fun extensionOf(name: String) = name.substringAfterLast('.', "").lowercase(Locale.ROOT)
 
-    // InputStream.skip and read are both allowed to do less than asked, which
-    // for a content:// stream they routinely do.
-    private fun InputStream.skipExactly(count: Long): Boolean {
-        var remaining = count
-
-        while (remaining > 0) {
-            val skipped = skip(remaining)
-
-            if (skipped > 0) {
-                remaining -= skipped
-                continue
-            }
-
-            // skip() returning 0 is not necessarily the end, so fall back to
-            // reading before giving up.
-            if (read() < 0) {
-                return false
-            }
-
-            remaining--
-        }
-
-        return true
-    }
-
-    private fun InputStream.readExactly(into: ByteArray): Boolean = readAtMost(into) == into.size
-
-    private fun InputStream.readAtMost(into: ByteArray): Int {
-        var filled = 0
-
-        while (filled < into.size) {
-            val got = read(into, filled, into.size - filled)
-
-            if (got <= 0) {
-                break
-            }
-
-            filled += got
-        }
-
-        return filled
-    }
-
-    private fun ByteArray.containsAscii(needle: String, length: Int): Boolean {
-        val pattern = needle.toByteArray(Charsets.US_ASCII)
-
-        if (length < pattern.size) {
-            return false
-        }
-
-        outer@ for (start in 0..length - pattern.size) {
-            for (i in pattern.indices) {
-                if (this[start + i] != pattern[i]) {
-                    continue@outer
-                }
-            }
-
-            return true
-        }
-
-        return false
-    }
-
     private fun formatSize(bytes: Long): String {
         if (bytes < 1024) {
             return "$bytes B"
@@ -794,20 +637,12 @@ class Converter(private val activity: AppCompatActivity) {
         const val PORTABLE = false
 
         /**
-         * The writer's own default, restated here because the PSP dialog
-         * offers it as the alternative and the two must agree.
+         * Leaves the block size to the writer, which is 128 KiB for a raw image
+         * and the size the CD format fixes for a disc. Every conversion uses it.
          */
-        const val DEFAULT_HUNK_BYTES = 128 * 1024
-
-        /** What dev.ppsspp.org asks for: one 2048-byte sector per hunk. */
-        const val PSP_HUNK_BYTES = 2048
+        const val HUNK_BYTES_AUTO = 0
 
         const val POLL_INTERVAL_MS = 500L
-
-        /** ISO 9660 puts the primary volume descriptor at sector 16. */
-        const val SECTOR_BYTES = 2048
-        const val PVD_OFFSET = 16L * SECTOR_BYTES
-        const val DIRECTORY_SCAN_BYTES = 512 * 1024
 
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT

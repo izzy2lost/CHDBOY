@@ -84,14 +84,4 @@
     <string name="about_button_website">Project Website</string>
     <string name="about_button_license">View License</string>
     <string name="about_browser_error">No browser available to open that link.</string>
-
-    <!-- Shown once per run when the folder holds PSP images, because PPSSPP is
-         the one target whose reader has a documented preference here. -->
-    <string name="psp_hunk_title">PSP game detected</string>
-    <plurals name="psp_hunk_message">
-        <item quantity="one">This folder contains a PSP game.\n\nPPSSPP reads a CHD one block at a time and keeps only the most recent one, so the block size is a real trade:\n\n•  2048 bytes is what the PPSSPP developers recommend. Nothing is ever decompressed twice, so games load and stream smoothly.\n\n•  128 KB makes the CHD about 25%% smaller, but PPSSPP then decompresses 64 times more data every time the game jumps around the disc, which can cause stuttering.\n\nOther consoles are unaffected and always use 128 KB.</item>
-        <item quantity="other">This folder contains %d PSP games.\n\nPPSSPP reads a CHD one block at a time and keeps only the most recent one, so the block size is a real trade:\n\n•  2048 bytes is what the PPSSPP developers recommend. Nothing is ever decompressed twice, so games load and stream smoothly.\n\n•  128 KB makes each CHD about 25%% smaller, but PPSSPP then decompresses 64 times more data every time a game jumps around the disc, which can cause stuttering.\n\nOther consoles are unaffected and always use 128 KB.</item>
-    </plurals>
-    <string name="psp_hunk_compatible">Use 2048 (recommended)</string>
-    <string name="psp_hunk_smallest">Use 128 KB (smaller)</string>
 </resources>
