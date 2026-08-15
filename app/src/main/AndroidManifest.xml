@@ -46,7 +46,7 @@
         </activity>
 
         <service
-            android:name=".services.ChdmanService"
+            android:name=".services.ConversionService"
             android:exported="false"
             android:foregroundServiceType="dataSync"
             android:enabled="true" />

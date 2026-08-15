@@ -1,31 +1,46 @@
 # CHDBOY
 
-CHDBOY is an Android port of the CHDMAN tool that converts disc images (BIN/CUE, ISO, etc.) into compressed CHD archives. CHD (Compressed Hunks of Data) is a lossless compression format that efficiently combines multiple files into a single compressed archive, significantly reducing storage requirements while preserving perfect quality of the original media. This app provides a mobile-friendly solution for compressing your game backups, saving valuable space on your device without any loss of data.
+CHDBOY converts disc images (BIN/CUE, GDI, ISO) into compressed CHD archives on Android. CHD (Compressed Hunks of Data) is a lossless format that shrinks a disc image substantially while preserving it byte for byte, so your game backups take far less space with no loss of data.
 
 > **Status:** Google Play submission candidate. The app is currently free. If you enjoy it, please consider supporting future releases when they arrive on the Play Store.
 
 ## Highlights
 
-- **Smart mode detection:** Automatically picks `createcd` or `createdvd` based on your source so you never guess the right command.
-- **PSP-aware compression:** Uses the recommended hunk size for PSP ISOs to keep conversions compatible and efficient.
-- **Duplicate CHD protection:** Existing CHDs with matching names are skipped to save time.
+- **Purpose-built CHD writer:** A native CHD v5 encoder written for this app, not a port of a desktop command-line tool. Hunks are compressed in parallel across every core, identical hunks are stored once, and zstd does the compressing.
+- **Nothing is copied:** Source and output both live in the folder you pick, reached through Storage Access Framework descriptors. A 40 GB image needs 40 GB of free space, not 80, and the conversion starts immediately instead of after two full copies.
+- **Real CD support:** `.cue` and `.gdi` produce proper CD-format CHDs with per-track metadata, subcode separation, and recomputable ECC dropped — the same layout `chdman createcd` writes, verified against libchdr.
+- **Duplicate CHD protection:** Images that already have a matching `.chd` in the folder are skipped.
 - **Background-friendly:** Accept notification permissions so conversions can finish even when the app is closed.
-- **Lossless space savings:** CHD shrinks multi-file disc images into a single lossless archive.
 
 ## Getting Started
 
 1. Install the APK or build from source (see below).
-2. Use the Android Storage Access Framework picker to select the folder that contains your BIN/CUE/ISO files (no legacy storage permission required).
-3. Confirm the files you want to convert.
-4. Wait for the notification when compression finishes. Large ISOs can take a while, so let the app run in the background or rely on notifications.
+2. Use the Storage Access Framework picker to select the folder that contains your BIN/CUE, GDI or ISO files (no legacy storage permission required).
+3. Every convertible image in that folder is queued; the finished `.chd` files are written back into the same folder.
+4. Wait for the notification when compression finishes. Large images can take a while, so let the app run in the background or rely on notifications.
 
 ## Building from Source
 
+The converter is built from source, so the submodules are required:
+
 ```bash
+git clone --recurse-submodules https://github.com/izzy2lost/CHDBOY
 ./gradlew assembleRelease
 ```
 
-Artifacts will appear in `app/build/outputs/apk/`.
+Artifacts appear in `app/build/outputs/apk/`. A single universal APK is produced, holding `arm64-v8a` and `armeabi-v7a`.
+
+Building the native converter needs NDK `30.0.15729638` and CMake `3.30.3`, both installable through the SDK manager.
+
+## Compatibility
+
+CHDs are written with zstd by default, which chdman learned to read in 0.264. Recent DuckStation, Flycast, PCSX2 and PPSSPP all read it. To target older tooling, flip `PORTABLE` in [`Converter.kt`](app/src/main/java/com/chdboy/core/Converter.kt) to write Deflate instead — larger and slower, but readable by every CHD implementation ever shipped.
+
+### PSP
+
+Disc images use 128 KB compression blocks, which compress best. PPSSPP is the exception: it decompresses a whole block to serve one 2048-byte sector and caches only the most recent one, so [its documentation](https://dev.ppsspp.org/docs/getting-started/dumping-games/) asks for 2048-byte blocks.
+
+CHDBOY detects PSP images by their ISO 9660 volume descriptor and asks which you want before converting them — 2048 for smooth streaming, or 128 KB for a file about 25% smaller. Other consoles are unaffected.
 
 ## Documentation & Policies
 
@@ -34,17 +49,15 @@ Artifacts will appear in `app/build/outputs/apk/`.
 
 ## Attribution
 
-- Forked from [Pipetto-crypto/Chdman](https://github.com/Pipetto-crypto/Chdman)
-- Powered by **CHDMAN**, part of the [MAME project](https://github.com/mamedev/mame)
+- Originally forked from [Pipetto-crypto/Chdman](https://github.com/Pipetto-crypto/Chdman)
+- The CHD format, and the CD track layout this writer reproduces, are from the [MAME project](https://github.com/mamedev/mame) (© MAMEdev)
+- [libchdr](https://github.com/rtissera/libchdr) (BSD-3-Clause) provides the reference decoder and the CD-ROM ECC routines
+- [zstd](https://github.com/facebook/zstd) (BSD / GPLv2) provides the compressor
 
 ## License
 
-This project is released under the terms of the [GNU General Public License v2](LICENSE). See the LICENSE file for full details, including the upstream MAME and CHDMAN licenses.
-
-CHDBOY includes or interfaces with code from MAME ((c) MAMEdev). Refer to the upstream repositories for additional notices and acknowledgments.
+This project is released under the terms of the [GNU General Public License v2](LICENSE). See the LICENSE file for full details.
 
 ---
 
 <sub>(c) 2025 izzy2lost. Consider supporting future CHDBOY releases on Google Play.</sub>
-
-

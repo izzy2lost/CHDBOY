@@ -1,51 +1,97 @@
 <resources>
     <string name="app_name">CHDBOY</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">Faster, smaller, lossless disc images</string>
+    <string name="home_card_title">Smart Compress</string>
+    <string name="action_smart_compress">Smart Compress</string>
+    <string name="home_card_body">Point CHDBOY at a folder and it converts every ISO, CUE and GDI image inside it to CHD. Each CHD is written alongside the image it came from, and the originals are left untouched.</string>
+    <string name="home_card_point_speed">Compresses on every CPU core at once with zstd, so it runs as fast as your device allows.</string>
+    <string name="home_card_point_mode">Reads each disc to work out whether it needs CD or DVD handling, so you never have to pick.</string>
+    <string name="home_card_point_skip">Leaves images that already have a CHD alone, so running it twice on the same folder costs nothing.</string>
+
+    <!-- Menu and settings -->
     <string name="menu_about">About</string>
+    <string name="menu_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_category_general">General</string>
+    <string name="settings_delete_source_title">Delete originals after compressing</string>
+    <string name="settings_delete_source_summary">Removes a disc image and its track files once its CHD has been written. Skipped if the conversion fails.</string>
+    <string name="settings_theme_title">Theme</string>
+
+    <!-- Folder action sheet -->
+    <string name="sheet_title">Choose an action</string>
+    <string name="sheet_subtitle">Both start by picking a folder</string>
+    <string name="sheet_compress_title">Compress a folder</string>
+    <string name="sheet_compress_summary">Convert the disc images inside it to CHD</string>
+    <string name="sheet_transfer_title">Recover old output</string>
+    <string name="sheet_transfer_summary">Move CHDs left in app storage by earlier versions</string>
+
+    <!-- Notification permission -->
+    <string name="notifications_title">Allow notifications?</string>
+    <string name="notifications_message">A disc image can take several minutes to compress, and CHDBOY keeps going while you use other apps.\n\nNotifications are how it reports back:\n\n•  Live progress while a folder converts\n•  A summary when the run finishes\n\nYou can carry on without them. You just won\'t see progress outside the app.</string>
+    <string name="notifications_allow">Allow</string>
+    <string name="notifications_decline">Not now</string>
+
+    <!-- Progress -->
+    <string name="progress_title">Smart Compress</string>
+    <string name="progress_preparing">Preparing…</string>
+    <string name="progress_ratio">Ratio: %1$s</string>
+    <string name="progress_ratio_pending">Ratio: --</string>
+    <string name="progress_size_pending">-- of --</string>
+    <string name="progress_size">%1$s of %2$s</string>
+    <string name="progress_file">Compressing %1$s\nFile %2$d of %3$d</string>
+    <string name="progress_background_note">Safe to leave the app. Compression carries on in the background.</string>
+    <string name="progress_cancel">Cancel</string>
+    <string name="progress_done_detail">Done</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Compression progress</string>
+    <string name="notification_preparing">Preparing…</string>
+    <string name="notification_compressing">Compressing…</string>
+    <string name="notification_progress">%1$s\n%2$d%% • ratio %3$s</string>
+    <string name="notification_finished">Finished</string>
+
+    <!-- Run outcomes -->
+    <string name="toast_compression_started">Compression started</string>
+    <string name="toast_cancelling">Cancelling at the next checkpoint…</string>
+    <string name="toast_folder_unreadable">That folder could not be opened</string>
+    <string name="toast_no_folder">No folder chosen, so there is nothing to compress</string>
+    <string name="toast_no_destination">No destination chosen</string>
+    <string name="toast_nothing_to_transfer">No leftover files in app storage</string>
+    <string name="toast_no_images">That folder has no .iso, .cue or .gdi images</string>
+    <string name="toast_all_have_chds">Nothing to do. Every image here already has a CHD</string>
+    <string name="toast_failure">%1$s: %2$s</string>
+    <string name="summary_cancelled">Cancelled</string>
+
+    <plurals name="toast_transferred">
+        <item quantity="one">Moved %d file</item>
+        <item quantity="other">Moved %d files</item>
+    </plurals>
+    <plurals name="toast_skipping">
+        <item quantity="one">Skipping %d image that already has a CHD</item>
+        <item quantity="other">Skipping %d images that already have CHDs</item>
+    </plurals>
+    <plurals name="summary_converted">
+        <item quantity="one">%d file compressed</item>
+        <item quantity="other">%d files compressed</item>
+    </plurals>
+    <string name="summary_partial">%1$d compressed, %2$d failed</string>
+
+    <!-- About -->
     <string name="about_title">About CHDBOY</string>
-    <string name="about_message">CHDBOY is a Android port of CHDMAN that compresses BIN, CUE, ISO, and more into CHD archives.\n\nHighlights:\n- Smartly switches between createcd and createdvd\n- Applies PSP-friendly hunk sizes automatically\n- Skips files that already have matching CHDs\n\nForked from Pipetto-crypto/Chdman and powered by CHDMAN from the MAME project.\n\nLicense: GNU General Public License v2\n\n\u00A9 2025 izzy2lost. Visit the website or license for more details.</string>
+    <string name="about_message">CHDBOY losslessly compresses BIN/CUE, GDI and ISO disc images into CHD archives.\n\nHighlights:\n\n•  Compresses on every core at once, using zstd\n•  Reads and writes in place, so no temporary copies\n•  Stores repeated data once across the whole image\n•  Writes proper CD track metadata for CUE and GDI\n•  Skips files that already have matching CHDs\n\nOriginally forked from Pipetto-crypto/Chdman. The CHD format is from the MAME project; decoding and CD-ROM ECC come from libchdr, and compression from zstd.\n\nLicense: GNU General Public License v2\n\n© 2025 izzy2lost</string>
     <string name="about_button_website">Project Website</string>
     <string name="about_button_license">View License</string>
-    <string name="about_browser_error">Unable to open link. Please install a web browser.</string>
+    <string name="about_browser_error">No browser available to open that link.</string>
 
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
-        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
-        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
-        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
-        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
-        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
-        bibendum, vel congue leo egestas.\n\n
-        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
-        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
-        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
-        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
-        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
-        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
-        est.\n\n
-        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
-        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
-        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
-        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
-        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
-        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
-        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
-        convallis.\n\n
-        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
-        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
-        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
-        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
-        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
-        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
-        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
-    </string>
+    <!-- Shown once per run when the folder holds PSP images, because PPSSPP is
+         the one target whose reader has a documented preference here. -->
+    <string name="psp_hunk_title">PSP game detected</string>
+    <plurals name="psp_hunk_message">
+        <item quantity="one">This folder contains a PSP game.\n\nPPSSPP reads a CHD one block at a time and keeps only the most recent one, so the block size is a real trade:\n\n•  2048 bytes is what the PPSSPP developers recommend. Nothing is ever decompressed twice, so games load and stream smoothly.\n\n•  128 KB makes the CHD about 25%% smaller, but PPSSPP then decompresses 64 times more data every time the game jumps around the disc, which can cause stuttering.\n\nOther consoles are unaffected and always use 128 KB.</item>
+        <item quantity="other">This folder contains %d PSP games.\n\nPPSSPP reads a CHD one block at a time and keeps only the most recent one, so the block size is a real trade:\n\n•  2048 bytes is what the PPSSPP developers recommend. Nothing is ever decompressed twice, so games load and stream smoothly.\n\n•  128 KB makes each CHD about 25%% smaller, but PPSSPP then decompresses 64 times more data every time a game jumps around the disc, which can cause stuttering.\n\nOther consoles are unaffected and always use 128 KB.</item>
+    </plurals>
+    <string name="psp_hunk_compatible">Use 2048 (recommended)</string>
+    <string name="psp_hunk_smallest">Use 128 KB (smaller)</string>
 </resources>

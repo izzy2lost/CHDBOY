@@ -9,7 +9,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:elevation="4dp"
-        app:title="Preferences"
+        app:title="@string/settings_title"
         app:layout_anchorGravity="top|end"
         android:id="@+id/toolbar"
         android:layout_gravity="top">

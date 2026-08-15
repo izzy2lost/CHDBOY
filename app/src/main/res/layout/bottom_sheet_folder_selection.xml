@@ -43,7 +43,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:src="@drawable/folder"
-                android:contentDescription="Folder"
+                android:contentDescription="@null"
                 app:tint="?attr/colorOnPrimaryContainer" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -58,14 +58,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="Select Operation"
+                android:text="@string/sheet_title"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="?attr/colorOnSurface" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose what to do with your files"
+                android:text="@string/sheet_subtitle"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:alpha="0.8" />
@@ -119,7 +119,7 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_compress"
-                        android:contentDescription="Compress"
+                        android:contentDescription="@null"
                         app:tint="?attr/colorOnSecondaryContainer" />
 
                 </com.google.android.material.card.MaterialCardView>
@@ -134,14 +134,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:text="Compress Files"
+                        android:text="@string/sheet_compress_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Convert disc images to CHD format"
+                        android:text="@string/sheet_compress_summary"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -151,7 +151,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_forward"
-                    android:contentDescription="Navigate"
+                    android:contentDescription="@null"
                     app:tint="?attr/colorOnSurfaceVariant"
                     android:alpha="0.6" />
 
@@ -195,7 +195,7 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_transfer"
-                        android:contentDescription="Transfer"
+                        android:contentDescription="@null"
                         app:tint="?attr/colorOnTertiaryContainer" />
 
                 </com.google.android.material.card.MaterialCardView>
@@ -210,14 +210,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:text="Transfer Files"
+                        android:text="@string/sheet_transfer_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Move compressed files to destination"
+                        android:text="@string/sheet_transfer_summary"
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -227,7 +227,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_forward"
-                    android:contentDescription="Navigate"
+                    android:contentDescription="@null"
                     app:tint="?attr/colorOnSurfaceVariant"
                     android:alpha="0.6" />
 

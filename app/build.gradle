@@ -4,7 +4,10 @@ apply plugin: "org.jetbrains.kotlin.android"
 android {
     namespace 'com.chdboy'
     compileSdk 36
-    ndkVersion "28.2.13676358"
+
+    // The NDK installed on this machine. Clang 21, which is what the -O3
+    // vectorisation of the CD codec's inner loops is worth having.
+    ndkVersion "30.0.15729638"
 
     defaultConfig {
         applicationId "com.chdboy"
@@ -13,24 +16,45 @@ android {
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
 
-    splits.abi {
-        enable true
-        reset()
-        include "arm64-v8a","armeabi-v7a"
-        universalApk true
+        // One APK with both ABIs rather than a per-ABI split.
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
+
+        externalNativeBuild {
+            cmake {
+                // Deliberately Release for BOTH variants. AGP would otherwise
+                // hand CMake Debug for a debug APK, which builds libchdr and
+                // zstd unoptimised -- and a conversion that takes eight
+                // minutes at -O3 takes most of an hour at -O0, which reads as
+                // a hang rather than as a debug build.
+                arguments "-DCMAKE_BUILD_TYPE=Release"
+            }
+        }
     }
 
     packagingOptions {
         jniLibs {
-            useLegacyPackaging true
+            // Store the converter uncompressed and map it directly instead of
+            // extracting a second copy into /data/app.
+            useLegacyPackaging false
         }
     }
 
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
+            version "3.30.3"
+        }
+    }
+
+    signingConfigs {
+        // Release is signed with the debug key so `assembleRelease` produces
+        // something installable out of the box. Replace this with a real
+        // keystore before distributing anything.
+        release {
+            initWith debug
         }
     }
 
@@ -39,19 +63,22 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    
+
     kotlinOptions {
         jvmTarget = '17'
-    }
-
-    buildFeatures {
-        viewBinding true
     }
 }
 
@@ -59,13 +86,9 @@ dependencies {
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
-    implementation libs.navigation.fragment
-    implementation libs.navigation.ui
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "androidx.documentfile:documentfile:1.0.1"
-    implementation libs.navigation.runtime
-    
-    
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

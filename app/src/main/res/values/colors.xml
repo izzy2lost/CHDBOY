@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Legacy colors for compatibility -->
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
     <color name="transparent">#00000000</color>
-    <color name="gray">#A9A9A9</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    
+
     <!-- CHDBOY Brand Colors - Light Theme -->
     <!-- Primary - Bright Yellow -->
     <color name="md_theme_light_primary">#FFD700</color>
@@ -105,10 +96,10 @@
     <color name="hero_card_background_dark">#FF000000</color>
     <color name="hero_card_text_dark">#FFFFFFFF</color>
     
-    <!-- Default hero card colors (light theme) -->
+    <!-- Default hero card colors, overridden in values-night -->
     <color name="hero_card_background">@color/hero_card_background_light</color>
     <color name="hero_card_text">@color/hero_card_text_light</color>
-    
-    <!-- Title color -->
-    <color name="title_bright_yellow">#FFEF00</color>
+
+    <!-- Accent the system applies to the notification icon and app name. -->
+    <color name="notification_accent">#FFEF00</color>
 </resources>

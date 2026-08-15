@@ -41,18 +41,27 @@
                     android:padding="32dp"
                     android:gravity="center">
 
-                    <ImageView
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:layout_marginBottom="32dp"
-                        android:src="@mipmap/ic_launcher"
-                        android:contentDescription="@string/app_name"
-                        android:scaleType="fitCenter" />
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/chdboy"
+                            android:contentDescription="@string/app_name"
+                            android:scaleType="fitCenter" />
+
+                    </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Compress your disc images with ease!"
+                        android:text="@string/home_tagline"
                         android:textAppearance="?attr/textAppearanceHeadlineSmall"
                         android:textColor="@color/hero_card_text"
                         android:textAlignment="center"
@@ -84,7 +93,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
-                        android:text="Smart Compress"
+                        android:text="@string/home_card_title"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold"
@@ -98,7 +107,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="Automatically converts ISO, BIN, CUE, and GDI disc images to CHD format using the optimal compression method. Smart Compress will skip files that already have CHD versions, so you can safely use folders with existing conversions."
+                        android:text="@string/home_card_body"
                         android:textAppearance="?attr/textAppearanceBodyLarge"
                         android:textColor="?attr/colorOnSurface"
                         android:lineSpacingExtra="4dp" />
@@ -122,8 +131,8 @@
                                 android:layout_width="16dp"
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/compress_24px"
-                                android:contentDescription="Smart"
+                                android:src="@drawable/ic_bolt"
+                                android:contentDescription="@null"
                                 app:tint="#000000" />
 
                         </com.google.android.material.card.MaterialCardView>
@@ -133,7 +142,43 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_gravity="center_vertical"
-                            android:text="Smart Compress automatically selects between createcd and createdvd modes for optimal results"
+                            android:text="@string/home_card_point_speed"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="12dp"
+                            app:cardCornerRadius="8dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp"
+                            app:cardBackgroundColor="#FFEF00">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/compress_24px"
+                                android:contentDescription="@null"
+                                app:tint="#000000" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/home_card_point_mode"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -159,7 +204,7 @@
                                 android:layout_height="16dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_check_circle"
-                                android:contentDescription="Skip"
+                                android:contentDescription="@null"
                                 app:tint="#000000" />
 
                         </com.google.android.material.card.MaterialCardView>
@@ -169,7 +214,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_gravity="center_vertical"
-                            android:text="Automatically skips files that already have CHD versions - perfect for mixed folders"
+                            android:text="@string/home_card_point_skip"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -206,7 +251,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="CHDBOY"
+                android:text="@string/app_name"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:textColor="#FFEF00"
                 android:textStyle="bold"
@@ -227,7 +272,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:text="Smart Compress"
+        android:text="@string/action_smart_compress"
         android:textColor="#000000"
         app:icon="@drawable/compress_24px"
         app:iconTint="#000000"
