@@ -1,21 +1,20 @@
 apply plugin: "com.android.application"
-apply plugin: "org.jetbrains.kotlin.android"
 
 android {
-    namespace 'com.chdboy'
-    compileSdk 36
+    namespace = 'com.chdboy'
+    compileSdk = 36
 
     // The NDK installed on this machine. Clang 21, which is what the -O3
     // vectorisation of the CD codec's inner loops is worth having.
-    ndkVersion "30.0.15729638"
+    ndkVersion = "30.0.15729638"
 
     defaultConfig {
-        applicationId "com.chdboy"
-        minSdk 23
-        targetSdk 36
-        versionCode 2
-        versionName "1.1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = "com.chdboy"
+        minSdk = 23
+        targetSdk = 36
+        versionCode = 2
+        versionName = "1.1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // One APK with both ABIs rather than a per-ABI split.
         ndk {
@@ -34,18 +33,18 @@ android {
         }
     }
 
-    packagingOptions {
+    packaging {
         jniLibs {
             // Store the converter uncompressed and map it directly instead of
             // extracting a second copy into /data/app.
-            useLegacyPackaging false
+            useLegacyPackaging = false
         }
     }
 
     externalNativeBuild {
         cmake {
-            path "src/main/cpp/CMakeLists.txt"
-            version "3.30.3"
+            path = "src/main/cpp/CMakeLists.txt"
+            version = "3.30.3"
         }
     }
 
@@ -60,25 +59,21 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = '17'
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
