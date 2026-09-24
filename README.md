@@ -36,12 +36,6 @@ Building the native converter needs NDK `30.0.15729638` and CMake `3.30.3`, both
 
 CHDs are written with zstd by default, which chdman learned to read in 0.264. Recent DuckStation, Flycast, PCSX2 and PPSSPP all read it. To target older tooling, flip `PORTABLE` in [`Converter.kt`](app/src/main/java/com/chdboy/core/Converter.kt) to write Deflate instead — larger and slower, but readable by every CHD implementation ever shipped.
 
-### PSP
-
-Disc images use 128 KB compression blocks, which compress best. PPSSPP is the exception: it decompresses a whole block to serve one 2048-byte sector and caches only the most recent one, so [its documentation](https://dev.ppsspp.org/docs/getting-started/dumping-games/) asks for 2048-byte blocks.
-
-CHDBOY detects PSP images by their ISO 9660 volume descriptor and asks which you want before converting them — 2048 for smooth streaming, or 128 KB for a file about 25% smaller. Other consoles are unaffected.
-
 ## Documentation & Policies
 
 - [Project Website & Privacy Policy](https://izzy2lost.github.io/CHDBOY/)
