@@ -56,6 +56,10 @@ set(WITH_SYSTEM_ZLIB ON CACHE BOOL "" FORCE)
 set(CHDR_WANT_RAW_DATA_SECTOR ON CACHE BOOL "" FORCE)
 set(CHDR_WANT_SUBCODE ON CACHE BOOL "" FORCE)
 
+# Upstream defaults this ON; its test and fuzzer targets have no place in an
+# APK build.
+set(CHDR_WANT_TESTS OFF CACHE BOOL "" FORCE)
+
 add_subdirectory(libchdr EXCLUDE_FROM_ALL)
 
 # ---------------------------------------------------------------------------
