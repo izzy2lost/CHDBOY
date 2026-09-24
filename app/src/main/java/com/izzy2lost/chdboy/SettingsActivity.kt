@@ -1,10 +1,10 @@
-package com.chdboy
+package com.izzy2lost.chdboy
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.chdboy.fragments.PreferenceFragment
+import com.izzy2lost.chdboy.fragments.PreferenceFragment
 
 class SettingsActivity : AppCompatActivity() {
 

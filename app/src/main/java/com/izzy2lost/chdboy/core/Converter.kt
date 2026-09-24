@@ -1,4 +1,4 @@
-package com.chdboy.core
+package com.izzy2lost.chdboy.core
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -20,8 +20,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
-import com.chdboy.R
-import com.chdboy.services.ConversionService
+import com.izzy2lost.chdboy.R
+import com.izzy2lost.chdboy.services.ConversionService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
 import java.util.concurrent.Executors

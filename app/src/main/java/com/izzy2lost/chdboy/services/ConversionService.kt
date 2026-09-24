@@ -1,4 +1,4 @@
-package com.chdboy.services
+package com.izzy2lost.chdboy.services
 
 import android.Manifest
 import android.app.Notification
@@ -16,13 +16,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.chdboy.MainActivity
-import com.chdboy.R
+import com.izzy2lost.chdboy.MainActivity
+import com.izzy2lost.chdboy.R
 
 /**
  * Keeps the process alive while a conversion runs.
  *
- * It does no work itself — [com.chdboy.core.Converter] drives everything — but
+ * It does no work itself — [com.izzy2lost.chdboy.core.Converter] drives everything — but
  * a disc image takes minutes, and without a foreground service Android is free
  * to kill the app the moment the user switches away from it.
  */

@@ -1,4 +1,4 @@
-package com.chdboy.utils
+package com.izzy2lost.chdboy.utils
 
 import android.database.Cursor
 import android.database.MatrixCursor

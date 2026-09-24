@@ -1,4 +1,4 @@
-package com.chdboy.utils
+package com.izzy2lost.chdboy.utils
 
 import android.net.Uri
 import android.provider.DocumentsContract
@@ -6,8 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
-import com.chdboy.R
-import com.chdboy.core.Converter
+import com.izzy2lost.chdboy.R
+import com.izzy2lost.chdboy.core.Converter
 import java.io.File
 
 /** What the picker should do once the user has chosen a folder. */

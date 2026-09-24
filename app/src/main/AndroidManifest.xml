@@ -16,8 +16,8 @@
         android:theme="@style/Theme.CHDBOY"
         tools:targetApi="36">
        <provider
-           android:name="com.chdboy.utils.MyFileProvider"
-           android:authorities="com.chdboy.fileprovider"
+           android:name="com.izzy2lost.chdboy.utils.MyFileProvider"
+           android:authorities="com.izzy2lost.chdboy.fileprovider"
            android:exported="true"
            android:grantUriPermissions="true"
            android:permission="android.permission.MANAGE_DOCUMENTS">

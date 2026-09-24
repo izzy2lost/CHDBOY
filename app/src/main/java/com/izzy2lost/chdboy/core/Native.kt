@@ -1,4 +1,4 @@
-package com.chdboy.core
+package com.izzy2lost.chdboy.core
 
 /**
  * The native converter.

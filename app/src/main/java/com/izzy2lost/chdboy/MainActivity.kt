@@ -1,4 +1,4 @@
-package com.chdboy
+package com.izzy2lost.chdboy
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -20,8 +20,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import com.chdboy.utils.FilePicker
-import com.chdboy.utils.Operations
+import com.izzy2lost.chdboy.utils.FilePicker
+import com.izzy2lost.chdboy.utils.Operations
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView

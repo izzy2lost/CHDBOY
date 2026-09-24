@@ -34,7 +34,7 @@ Building the native converter needs NDK `30.0.15729638` and CMake `3.30.3`, both
 
 ## Compatibility
 
-CHDs are written with zstd by default, which chdman learned to read in 0.264. Recent DuckStation, Flycast, PCSX2 and PPSSPP all read it. To target older tooling, flip `PORTABLE` in [`Converter.kt`](app/src/main/java/com/chdboy/core/Converter.kt) to write Deflate instead — larger and slower, but readable by every CHD implementation ever shipped.
+CHDs are written with zstd by default, which chdman learned to read in 0.264. Recent DuckStation, Flycast, PCSX2 and PPSSPP all read it. To target older tooling, flip `PORTABLE` in [`Converter.kt`](app/src/main/java/com/izzy2lost/chdboy/core/Converter.kt) to write Deflate instead — larger and slower, but readable by every CHD implementation ever shipped.
 
 ## Documentation & Policies
 

@@ -56,20 +56,20 @@ std::string to_string(JNIEnv* env, jstring value)
 extern "C" {
 
 JNIEXPORT jint JNICALL
-Java_com_chdboy_core_Native_nativeOpenSession(JNIEnv*, jobject)
+Java_com_izzy2lost_chdboy_core_Native_nativeOpenSession(JNIEnv*, jobject)
 {
 	return open_session();
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_chdboy_core_Native_nativeBindFd(JNIEnv* env, jobject, jint session, jint fd, jstring name)
+Java_com_izzy2lost_chdboy_core_Native_nativeBindFd(JNIEnv* env, jobject, jint session, jint fd, jstring name)
 {
 	const std::string path = bind_fd(session, fd, to_string(env, name));
 	return env->NewStringUTF(path.c_str());
 }
 
 JNIEXPORT void JNICALL
-Java_com_chdboy_core_Native_nativeCloseSession(JNIEnv*, jobject, jint session)
+Java_com_izzy2lost_chdboy_core_Native_nativeCloseSession(JNIEnv*, jobject, jint session)
 {
 	close_session(session);
 }
@@ -78,7 +78,7 @@ Java_com_chdboy_core_Native_nativeCloseSession(JNIEnv*, jobject, jint session)
 // main thread. Returns false on failure or cancellation; nativeLastError says
 // which, and a cancelled run leaves a partial output for the caller to delete.
 JNIEXPORT jboolean JNICALL
-Java_com_chdboy_core_Native_nativeConvert(JNIEnv* env, jobject, jstring source, jstring destination,
+Java_com_izzy2lost_chdboy_core_Native_nativeConvert(JNIEnv* env, jobject, jstring source, jstring destination,
 	jboolean portable, jint hunkBytes)
 {
 	const std::string src_path = to_string(env, source);
@@ -140,7 +140,7 @@ Java_com_chdboy_core_Native_nativeConvert(JNIEnv* env, jobject, jstring source, 
 // Percentages and ratios are the caller's to compute: this way the dialog and
 // the notification cannot disagree about them.
 JNIEXPORT jstring JNICALL
-Java_com_chdboy_core_Native_nativeGetProgress(JNIEnv* env, jobject)
+Java_com_izzy2lost_chdboy_core_Native_nativeGetProgress(JNIEnv* env, jobject)
 {
 	const uint64_t total = g_total.load();
 
@@ -158,13 +158,13 @@ Java_com_chdboy_core_Native_nativeGetProgress(JNIEnv* env, jobject)
 
 // Asks the running conversion to stop at its next batch boundary.
 JNIEXPORT void JNICALL
-Java_com_chdboy_core_Native_nativeCancel(JNIEnv*, jobject)
+Java_com_izzy2lost_chdboy_core_Native_nativeCancel(JNIEnv*, jobject)
 {
 	g_cancel = true;
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_chdboy_core_Native_nativeLastError(JNIEnv* env, jobject)
+Java_com_izzy2lost_chdboy_core_Native_nativeLastError(JNIEnv* env, jobject)
 {
 	std::lock_guard<std::mutex> lock(g_error_mutex);
 	return env->NewStringUTF(g_error.c_str());

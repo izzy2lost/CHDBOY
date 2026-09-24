@@ -1,7 +1,7 @@
 apply plugin: "com.android.application"
 
 android {
-    namespace = 'com.chdboy'
+    namespace = 'com.izzy2lost.chdboy'
     compileSdk = 36
 
     // The NDK installed on this machine. Clang 21, which is what the -O3
@@ -9,7 +9,7 @@ android {
     ndkVersion = "30.0.15729638"
 
     defaultConfig {
-        applicationId = "com.chdboy"
+        applicationId = "com.izzy2lost.chdboy"
         minSdk = 23
         targetSdk = 36
         versionCode = 2

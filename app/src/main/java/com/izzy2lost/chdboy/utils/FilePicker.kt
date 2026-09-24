@@ -1,4 +1,4 @@
-package com.chdboy.utils
+package com.izzy2lost.chdboy.utils
 
 import android.app.Activity
 import android.content.Intent

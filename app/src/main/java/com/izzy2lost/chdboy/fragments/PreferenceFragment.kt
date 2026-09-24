@@ -1,10 +1,10 @@
-package com.chdboy.fragments
+package com.izzy2lost.chdboy.fragments
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.chdboy.R
+import com.izzy2lost.chdboy.R
 
 class PreferenceFragment : PreferenceFragmentCompat() {
 
