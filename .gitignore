@@ -9,3 +9,13 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signed bundles/APKs from Android Studio (Build > Generate Signed App Bundle)
+/app/release/
+/app/debug/
+*.aab
+
+# Signing keys and their passwords
+*.jks
+*.keystore
+keystore.properties
