@@ -29,7 +29,8 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 /**
- * Converts every disc image in a folder to CHD, in place.
+ * Converts every disc image in a folder to CHD, in place, or a picked set of
+ * images into a folder of the user's choosing.
  *
  * The folder is a SAF tree the user granted read and write on, so both the
  * source and the finished .chd live there and nothing is ever staged into the
@@ -62,14 +63,58 @@ class Converter(private val activity: AppCompatActivity) {
             return
         }
 
-        val children = tree.listFiles()
+        val children = tree.listFiles().toList()
         val byName = children.mapNotNull { file -> file.name?.let { it to file } }.toMap()
         val existing = byName.keys.map { it.lowercase(Locale.ROOT) }.toSet()
 
+        val jobs = plan(children, byName, existing, requireTracks = false, R.string.toast_no_images)
+            ?: return
+
+        start(tree, jobs)
+    }
+
+    /**
+     * Converts the images among [files], writing each CHD into [destinationUri].
+     *
+     * The picked documents are all that can be read, so a `.cue` or `.gdi`
+     * whose track files were not picked with it is reported and left out
+     * rather than failing half-way through in native.
+     */
+    fun convertFiles(files: List<Uri>, destinationUri: Uri) {
+        val destination = runCatching { DocumentFile.fromTreeUri(activity, destinationUri) }.getOrNull()
+
+        if (destination == null || !destination.isDirectory) {
+            Toast.makeText(activity, R.string.toast_folder_unreadable, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val picked = files.mapNotNull { runCatching { DocumentFile.fromSingleUri(activity, it) }.getOrNull() }
+        val byName = picked.mapNotNull { file -> file.name?.let { it to file } }.toMap()
+        val existing = destination.listFiles().mapNotNull { it.name?.lowercase(Locale.ROOT) }.toSet()
+
+        val jobs = plan(picked, byName, existing, requireTracks = true, R.string.toast_files_no_images)
+            ?: return
+
+        start(destination, jobs)
+    }
+
+    /**
+     * Turns [candidates] into jobs, skipping images whose CHD is already in
+     * [existing]. Returns null, having told the user why, when there is
+     * nothing to do.
+     */
+    private fun plan(
+        candidates: List<DocumentFile>,
+        byName: Map<String, DocumentFile>,
+        existing: Set<String>,
+        requireTracks: Boolean,
+        noImagesMessage: Int,
+    ): List<Job>? {
         val jobs = mutableListOf<Job>()
         var skipped = 0
+        var incomplete = 0
 
-        for (file in children) {
+        for (file in candidates) {
             val name = file.name ?: continue
 
             if (!file.isFile || extensionOf(name) !in SUPPORTED) {
@@ -83,18 +128,29 @@ class Converter(private val activity: AppCompatActivity) {
                 continue
             }
 
-            jobs += Job(file, sidecarsFor(file, byName), outputName)
+            val referenced = referencedNames(file)
+            val sidecars = resolve(referenced, byName)
+
+            if (requireTracks && sidecars.size < referenced.size) {
+                val found = sidecars.mapNotNull { it.name?.lowercase(Locale.ROOT) }.toSet()
+                val missing = referenced.filter { it.lowercase(Locale.ROOT) !in found }
+                val text = activity.getString(R.string.toast_missing_tracks, name, missing.joinToString())
+                Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
+                incomplete++
+                continue
+            }
+
+            jobs += Job(file, sidecars, outputName)
         }
 
         if (jobs.isEmpty()) {
-            val message = if (skipped > 0) {
-                R.string.toast_all_have_chds
-            } else {
-                R.string.toast_no_images
+            // An incomplete image has already said what is wrong with it.
+            if (incomplete == 0) {
+                val message = if (skipped > 0) R.string.toast_all_have_chds else noImagesMessage
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
             }
 
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
-            return
+            return null
         }
 
         if (skipped > 0) {
@@ -102,7 +158,7 @@ class Converter(private val activity: AppCompatActivity) {
             Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
         }
 
-        start(tree, jobs)
+        return jobs
     }
 
     private fun start(tree: DocumentFile, jobs: List<Job>) {
@@ -544,12 +600,12 @@ class Converter(private val activity: AppCompatActivity) {
     // ---------------------------------------------------------------------
 
     /**
-     * The files a `.cue` or `.gdi` points at, resolved against the folder it
-     * sits in. Only the names matter here — the native parser does the real
-     * parsing; this pass exists so every referenced file gets a descriptor
-     * bound before the conversion starts.
+     * The names of the files a `.cue` or `.gdi` points at. Only the names
+     * matter here — the native parser does the real parsing; this pass exists
+     * so every referenced file gets a descriptor bound before the conversion
+     * starts.
      */
-    private fun sidecarsFor(file: DocumentFile, byName: Map<String, DocumentFile>): List<DocumentFile> {
+    private fun referencedNames(file: DocumentFile): List<String> {
         val name = file.name ?: return emptyList()
 
         val names = when (extensionOf(name)) {
@@ -558,7 +614,12 @@ class Converter(private val activity: AppCompatActivity) {
             else -> return emptyList()
         }
 
-        return names.distinct().mapNotNull { referenced ->
+        return names.distinct()
+    }
+
+    /** [names] resolved against the files available alongside the sheet. */
+    private fun resolve(names: List<String>, byName: Map<String, DocumentFile>): List<DocumentFile> {
+        return names.mapNotNull { referenced ->
             byName[referenced] ?: byName.entries
                 .firstOrNull { it.key.equals(referenced, ignoreCase = true) }
                 ?.value

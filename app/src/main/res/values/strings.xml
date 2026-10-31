@@ -5,7 +5,9 @@
     <string name="home_tagline">Faster, smaller, lossless disc images</string>
     <string name="home_card_title">Smart Compress</string>
     <string name="action_smart_compress">Smart Compress</string>
-    <string name="home_card_body">Point CHDBOY at a folder and it converts every ISO, CUE and GDI image inside it to CHD. Each CHD is written alongside the image it came from, and the originals are left untouched.</string>
+    <string name="action_compress_folder">Whole folder</string>
+    <string name="action_compress_files">Select files</string>
+    <string name="home_card_body">Point CHDBOY at a folder and it converts every ISO, CUE and GDI image inside it to CHD, each written alongside the image it came from. Or pick just the images you want and choose where the CHDs go. The originals are left untouched.</string>
     <string name="home_card_point_speed">Compresses on every CPU core at once with zstd, so it runs as fast as your device allows.</string>
     <string name="home_card_point_mode">Reads each disc to work out whether it needs CD or DVD handling, so you never have to pick.</string>
     <string name="home_card_point_skip">Leaves images that already have a CHD alone, so running it twice on the same folder costs nothing.</string>
@@ -60,6 +62,10 @@
     <string name="toast_no_destination">No destination chosen</string>
     <string name="toast_nothing_to_transfer">No leftover files in app storage</string>
     <string name="toast_no_images">That folder has no .iso, .cue or .gdi images</string>
+    <string name="toast_no_files">No files chosen, so there is nothing to compress</string>
+    <string name="toast_files_no_images">None of those files is an .iso, .cue or .gdi image</string>
+    <string name="toast_pick_destination">Now choose where to save the CHDs</string>
+    <string name="toast_missing_tracks">%1$s needs %2$s. Select its track files along with it</string>
     <string name="toast_all_have_chds">Nothing to do. Every image here already has a CHD</string>
     <string name="toast_failure">%1$s: %2$s</string>
     <string name="summary_cancelled">Cancelled</string>

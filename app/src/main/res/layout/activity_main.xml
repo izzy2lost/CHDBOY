@@ -265,18 +265,63 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- FAB -->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab"
+    <!-- Dims the screen while the FAB menu is open; a tap on it closes the menu. -->
+    <View
+        android:id="@+id/fab_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:clickable="true"
+        android:focusable="false"
+        android:alpha="0"
+        android:visibility="gone" />
+
+    <!-- FAB menu -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:text="@string/action_smart_compress"
-        android:textColor="#000000"
-        app:icon="@drawable/compress_24px"
-        app:iconTint="#000000"
-        app:backgroundTint="#FFEF00" />
+        android:gravity="end"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_files"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/action_compress_files"
+            android:textColor="#000000"
+            android:visibility="invisible"
+            app:icon="@drawable/ic_file"
+            app:iconTint="#000000"
+            app:backgroundTint="#FFEF00" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/action_compress_folder"
+            android:textColor="#000000"
+            android:visibility="invisible"
+            app:icon="@drawable/ic_folder_small"
+            app:iconTint="#000000"
+            app:backgroundTint="#FFEF00" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_smart_compress"
+            android:textColor="#000000"
+            app:icon="@drawable/compress_24px"
+            app:iconTint="#000000"
+            app:backgroundTint="#FFEF00" />
+
+    </LinearLayout>
 
     <!-- Bottom Sheet -->
     <include layout="@layout/bottom_sheet_folder_selection" />

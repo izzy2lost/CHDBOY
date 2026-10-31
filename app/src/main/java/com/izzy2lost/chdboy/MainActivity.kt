@@ -11,9 +11,13 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -32,6 +36,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var picker: FilePicker
     private lateinit var fab: ExtendedFloatingActionButton
+    private lateinit var fabFolder: ExtendedFloatingActionButton
+    private lateinit var fabFiles: ExtendedFloatingActionButton
+    private lateinit var scrim: View
+
+    private var fabMenuOpen = false
+
+    private val closeFabMenuOnBack = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() = setFabMenuOpen(false)
+    }
 
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
 
@@ -66,10 +79,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeViews() {
         fab = findViewById(R.id.fab)
-        fab.setOnClickListener {
+        fabFolder = findViewById(R.id.fab_folder)
+        fabFiles = findViewById(R.id.fab_files)
+        scrim = findViewById(R.id.fab_scrim)
+
+        fab.setOnClickListener { setFabMenuOpen(!fabMenuOpen) }
+        scrim.setOnClickListener { setFabMenuOpen(false) }
+
+        fabFolder.setOnClickListener {
+            setFabMenuOpen(false)
             Operations.pendingOperation = "compress"
             picker.pickFolder()
         }
+
+        fabFiles.setOnClickListener {
+            setFabMenuOpen(false)
+            Operations.pendingOperation = "compress_files"
+            picker.pickFiles()
+        }
+
+        onBackPressedDispatcher.addCallback(this, closeFabMenuOnBack)
 
         val bottomSheet = findViewById<LinearLayout>(R.id.bottom_sheet_folder_selection)
 
@@ -104,6 +133,73 @@ class MainActivity : AppCompatActivity() {
                 else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             },
         )
+    }
+
+    /**
+     * Opens or closes the speed dial. The main button shrinks to a round close
+     * button while the two choices rise out of it, the lower one first.
+     */
+    private fun setFabMenuOpen(open: Boolean) {
+        if (open == fabMenuOpen) {
+            return
+        }
+
+        fabMenuOpen = open
+        closeFabMenuOnBack.isEnabled = open
+
+        val rise = resources.displayMetrics.density * FAB_RISE_DP
+        val choices = listOf(fabFolder, fabFiles)
+
+        if (open) {
+            fab.setIconResource(R.drawable.ic_close)
+            fab.shrink()
+
+            scrim.visibility = View.VISIBLE
+            scrim.animate().alpha(1f).setDuration(FAB_ANIM_MS).start()
+
+            choices.forEachIndexed { index, choice ->
+                choice.animate().cancel()
+                choice.alpha = 0f
+                choice.scaleX = 0.6f
+                choice.scaleY = 0.6f
+                choice.translationY = rise * (index + 1)
+                choice.visibility = View.VISIBLE
+
+                choice.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .translationY(0f)
+                    .setStartDelay(index * FAB_STAGGER_MS)
+                    .setDuration(FAB_ANIM_MS)
+                    .setInterpolator(OvershootInterpolator(1.4f))
+                    .start()
+            }
+        } else {
+            fab.setIconResource(R.drawable.compress_24px)
+            fab.extend()
+
+            scrim.animate()
+                .alpha(0f)
+                .setDuration(FAB_ANIM_MS)
+                .withEndAction { if (!fabMenuOpen) scrim.visibility = View.GONE }
+                .start()
+
+            // Reversed, so the one furthest from the button leaves first.
+            choices.asReversed().forEachIndexed { index, choice ->
+                choice.animate().cancel()
+                choice.animate()
+                    .alpha(0f)
+                    .scaleX(0.6f)
+                    .scaleY(0.6f)
+                    .translationY(rise * (choices.size - index))
+                    .setStartDelay(index * FAB_STAGGER_MS)
+                    .setDuration(FAB_ANIM_MS)
+                    .setInterpolator(AccelerateInterpolator())
+                    .withEndAction { if (!fabMenuOpen) choice.visibility = View.INVISIBLE }
+                    .start()
+            }
+        }
     }
 
     private fun animateCardPress(card: MaterialCardView) {
@@ -213,5 +309,11 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         const val REQUEST_NOTIFICATIONS = 1
+
+        const val FAB_ANIM_MS = 220L
+        const val FAB_STAGGER_MS = 50L
+
+        /** How far below its resting place each choice starts, per step. */
+        const val FAB_RISE_DP = 24f
     }
 }

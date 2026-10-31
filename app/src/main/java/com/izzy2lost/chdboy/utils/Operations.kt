@@ -10,7 +10,7 @@ import com.izzy2lost.chdboy.R
 import com.izzy2lost.chdboy.core.Converter
 import java.io.File
 
-/** What the picker should do once the user has chosen a folder. */
+/** What the picker should do once the user has chosen a folder (and, for files, those too). */
 object Operations {
 
     private const val TAG = "Operations"
@@ -28,6 +28,24 @@ object Operations {
         }
 
         Converter(activity).convertFolder(tree)
+        pendingOperation = ""
+    }
+
+    /** Converts the files the user picked, writing the CHDs into [FilePicker.selected]. */
+    fun compressFiles(activity: AppCompatActivity) {
+        val destination = FilePicker.selected
+        val files = FilePicker.selectedFiles
+
+        when {
+            files.isEmpty() ->
+                Toast.makeText(activity, R.string.toast_no_files, Toast.LENGTH_LONG).show()
+
+            destination == null ->
+                Toast.makeText(activity, R.string.toast_no_destination, Toast.LENGTH_LONG).show()
+
+            else -> Converter(activity).convertFiles(files, destination)
+        }
+
         pendingOperation = ""
     }
 
