@@ -49,11 +49,24 @@ android {
     }
 
     signingConfigs {
-        // Release is signed with the debug key so `assembleRelease` produces
-        // something installable out of the box. Replace this with a real
-        // keystore before distributing anything.
+        // Release is signed with the key named in keystore.properties at the
+        // project root, which is gitignored. Without it (CI, a fresh clone)
+        // it falls back to the debug key so `assembleRelease` still produces
+        // something installable.
         release {
-            initWith debug
+            def keystoreFile = rootProject.file("keystore.properties")
+
+            if (keystoreFile.exists()) {
+                def keystore = new Properties()
+                keystoreFile.withInputStream { keystore.load(it) }
+
+                storeFile = file(keystore["storeFile"])
+                storePassword = keystore["storePassword"]
+                keyAlias = keystore["keyAlias"]
+                keyPassword = keystore["keyPassword"]
+            } else {
+                initWith debug
+            }
         }
     }
 
